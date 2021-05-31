@@ -12,9 +12,10 @@ export const books = [
     isbn: '9780261102385',
     star_rating: '4.7',
     reviews: '9692',
-    image: 'lord of the rings.jpg',
-    price: '7.74',
-    currency: 'EUR',
+    image: 'the lord of the rings.jpg',
+    used_price: '7.74',
+    currency: '€',
+    new_price: '25.00',
   },
   {
     id: '2',
@@ -30,8 +31,9 @@ export const books = [
     star_rating: '4.6',
     reviews: '10484',
     image: 'tuesdays with morrie.jpg',
-    price: '0.63',
-    currency: 'EUR',
+    used_price: '0.63',
+    currency: '€',
+    new_price: '25.00',
   },
   {
     id: '3',
@@ -47,8 +49,9 @@ export const books = [
     star_rating: '4.3',
     reviews: '1862',
     image: 'the mountain shadow.jpg',
-    price: '1.17',
-    currency: 'EUR',
+    used_price: '1.17',
+    currency: '€',
+    new_price: '25.00',
   },
   {
     id: '4',
@@ -64,8 +67,9 @@ export const books = [
     star_rating: '4.5',
     reviews: '12709',
     image: 'fall of giants.jpg',
-    price: '0.15',
-    currency: 'EUR',
+    used_price: '0.20',
+    currency: '€',
+    new_price: '25.00',
   },
   {
     id: '5',
@@ -81,8 +85,9 @@ export const books = [
     star_rating: '4.6',
     reviews: '19172',
     image: 'a game of thrones.jpg',
-    price: '0.15',
-    currency: 'EUR',
+    used_price: '0.15',
+    currency: '€',
+    new_price: '25.00',
   },
   {
     id: '6',
@@ -98,8 +103,9 @@ export const books = [
     star_rating: '4.8',
     reviews: '20328',
     image: 'harry potter 5.jpg',
-    price: '1.61',
-    currency: 'EUR',
+    used_price: '1.61',
+    currency: '€',
+    new_price: '25.00',
   },
   {
     id: '7',
@@ -115,8 +121,9 @@ export const books = [
     star_rating: '4.7',
     reviews: '188',
     image: 'die weite des himmels.jpg',
-    price: '1.64',
-    currency: 'EUR',
+    used_price: '1.64',
+    currency: '€',
+    new_price: '25.00',
   },
   {
     id: '8',
@@ -132,8 +139,9 @@ export const books = [
     star_rating: '4.4',
     reviews: '8750',
     image: 'atlas shrugged.jpg',
-    price: '1.2',
-    currency: 'EUR',
+    used_price: '1.2',
+    currency: '€',
+    new_price: '25.00',
   },
   {
     id: '9',
@@ -150,8 +158,9 @@ export const books = [
     star_rating: '4.7',
     reviews: '12393',
     image: 'good omens.jpg',
-    price: '0.43',
-    currency: 'EUR',
+    used_price: '0.43',
+    currency: '€',
+    new_price: '25.00',
   },
   {
     id: '10',
@@ -167,7 +176,34 @@ export const books = [
     star_rating: '4.6',
     reviews: '15773',
     image: 'the name of the wind.jpg',
-    price: '0.97',
-    currency: 'EUR',
+    used_price: '0.97',
+    currency: '€',
+    new_price: '25.00',
   },
 ];
+
+// array with unique genres for category filter -->
+// currently hard coded (to be refined)
+export const uniqueGenres = [
+  'Fantasy',
+  'Education',
+  'Contemporary Fiction',
+  'Historical Thrillers',
+  'Political Fiction',
+  'Occult',
+];
+
+export const uniqueLanguages = ['English', 'German'];
+
+// helper functions to select specific book objects from array
+export function getBookById(id) {
+  return books.find((book) => book.id === id);
+}
+
+export function getBooksByGenre(genre) {
+  return books.filter((book) => book.genre === genre);
+}
+
+export function getBooksByLanguage(language) {
+  return books.filter((book) => book.language === language);
+}
