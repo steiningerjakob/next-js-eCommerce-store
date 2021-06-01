@@ -3,8 +3,8 @@ import Link from 'next/link';
 
 const headerStyles = css`
   display: flex;
-  padding: 15px 15px;
-  background-color: lightgrey;
+  padding: 16px 32px;
+  background-color: #b4b8ab;
   position: sticky;
   top: 0;
   left: 0;
@@ -15,12 +15,13 @@ const headerStyles = css`
     display: flex;
     align-items: center;
     line-height: 1em;
-    margin-left: 20px;
+    margin-left: 24px;
   }
 
   a {
     text-decoration: none;
     color: black;
+    margin-right: 24px;
     :hover {
       color: white;
     }

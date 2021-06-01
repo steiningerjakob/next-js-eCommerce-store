@@ -1,7 +1,7 @@
 import cookies from 'js-cookie';
 
 export function getShoppingCartCookieValue() {
-  const cookieValue = cookies.getJSON('quantity');
+  const cookieValue = cookies.getJSON('shoppingcart');
   return Array.isArray(cookieValue) ? cookieValue : [];
 }
 
@@ -14,10 +14,10 @@ export function addBookByBookId(bookId) {
   } else {
     newCookieValue.push({
       id: bookId,
-      quantity: 0,
+      quantity: 1,
     });
   }
-  cookies.set('quantity', newCookieValue);
+  cookies.set('shoppingcart', newCookieValue);
 }
 
 export function subtractBookByBookId(bookId) {
@@ -37,7 +37,7 @@ export function subtractBookByBookId(bookId) {
       quantity: 0,
     });
   }
-  cookies.set('quantity', newCookieValue);
+  cookies.set('shoppingcart', newCookieValue);
 }
 
 export function removeBookFromShoppingCart(bookId) {
@@ -50,13 +50,13 @@ export function removeBookFromShoppingCart(bookId) {
   } else {
     return newCookieValue;
   }
-  cookies.set('quantity', newCookieValue);
+  cookies.set('shoppingcart', newCookieValue);
 }
 
 export function clearShoppingCart() {
   const newCookieValue = [...getShoppingCartCookieValue()];
   newCookieValue.length = 0;
-  cookies.set('quantity', newCookieValue);
+  cookies.set('shoppingcart', newCookieValue);
 }
 
 export function parseCookieValue(value, defaultValue) {

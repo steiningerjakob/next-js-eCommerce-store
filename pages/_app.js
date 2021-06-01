@@ -14,6 +14,7 @@ function MyApp({ Component, pageProps }) {
 
           body {
             margin: 0;
+            background-color: #eef0eb;
             font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica,
               Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
           }

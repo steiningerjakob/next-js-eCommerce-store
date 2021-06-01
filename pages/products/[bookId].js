@@ -9,25 +9,74 @@ import {
   clearShoppingCart,
   getShoppingCartCookieValue,
   parseCookieValue,
-  removeBookFromShoppingCart,
-  subtractBookByBookId,
 } from '../../util/cookies';
 
 const gridStyles = css`
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  gap: 20px;
+  grid-template-columns: 1fr 2fr 2fr;
+  gap: 24px;
   margin-top: 25px;
   margin-left: 15px;
 `;
 
-const imgStyles = css`
-  max-width: 100%;
-  max-height: 100%;
+const headingStyles = css`
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 8px 0;
+`;
+
+const authorStyles = css`
+  font-weight: 500;
+  margin-bottom: 48px;
+  color: grey;
+`;
+
+const amazonStyles = css`
+  font-weight: 400;
+  color: grey;
+  margin-top: -32px;
+`;
+
+const ratingStyles = css`
+  display: flex;
+  align-items: center;
+
+  div + div {
+    margin-left: 16px;
+    color: grey;
+  }
 `;
 
 const boldStyles = css`
   font-weight: 600;
+`;
+
+const priceStyles = css`
+  font-size: 3em;
+  font-weight: 600;
+  color: #153243;
+  margin-top: 16px;
+`;
+
+const buttonStyles = css`
+  font-weight: 600;
+  font-size: 1.1em;
+  background-color: #153243;
+  color: white;
+  text-align: center;
+  padding: 24px 64px;
+  border-radius: 8px;
+  border: none;
+  margin: 16px 0;
+
+  :hover {
+    opacity: 0.8;
+    cursor: pointer;
+  }
+
+  :focus {
+    background-color: #81b29a;
+  }
 `;
 
 export default function ProductDetails(props) {
@@ -38,7 +87,7 @@ export default function ProductDetails(props) {
 
   // function to re-render upon change of shoppingCart variable
   useEffect(() => {
-    setShoppingCart(getShoppingCartCookieValue('quantity'));
+    setShoppingCart(getShoppingCartCookieValue('shoppingcart'));
   }, [shoppingCart]);
 
   function getDeliveryDate() {
@@ -57,37 +106,24 @@ export default function ProductDetails(props) {
       </Head>
       <div css={gridStyles}>
         <section>
-          <img
-            css={imgStyles}
-            src={`/${props.book.image}`}
-            alt={props.book.title_short}
-          />
-          {/* Image component crashing the server */}
-          {/* <Image
-          css={imgStyles}
-          src={`/${props.book.image}`}
-          alt={props.book.title_short}
-          width="500"
-          height="300"
-        /> */}
+          <img src={`/${props.book.image}`} alt={props.book.title_short} />
         </section>
         <section>
-          <h1>{props.book.title_short}</h1>
-          <h3>by {props.book.author}</h3>
-          <h2>Product details:</h2>
-          <p>
-            <span>
+          <p css={headingStyles}>{props.book.title_short}</p>
+          <p css={authorStyles}>by {props.book.author}</p>
+          <p css={headingStyles}>Product details:</p>
+          <p css={ratingStyles}>
+            <div>
               <ReactStars
                 count={5}
                 size={24}
                 value={parseFloat(props.book.star_rating)}
                 isHalf={true}
                 edit={false}
-              />{' '}
-              {props.book.reviews} reviews
-            </span>
+              />
+            </div>
+            <div>{props.book.reviews} reviews</div>
           </p>
-          {console.log(parseFloat(props.book.star_rating))}
           <p>
             <span css={boldStyles}>Publisher: </span>
             {props.book.publisher}
@@ -108,39 +144,32 @@ export default function ProductDetails(props) {
             <span css={boldStyles}>ISBN: </span>
             {props.book.isbn}
           </p>
+          <p>
+            <span css={boldStyles}>Description: </span>
+            [Yet to be added to database]
+          </p>
         </section>
         <section>
-          <p>
-            Buy used from us: {props.book.currency}{' '}
-            {parseFloat(props.book.used_price).toFixed(2)}
+          <p css={headingStyles}>Buy used from us:</p>
+          <p css={priceStyles}>
+            {props.book.currency} {parseFloat(props.book.used_price).toFixed(2)}
           </p>
-          <p>
-            Buy new from Amazon: {props.book.currency}{' '}
-            {parseFloat(props.book.new_price).toFixed(2)}
+          <p css={amazonStyles}>
+            (Amazon's price: {props.book.currency}{' '}
+            {parseFloat(props.book.new_price).toFixed(2)})
           </p>
           <p>Expected delivery date: {getDeliveryDate()}</p>
           <button
             onClick={() => {
               setShoppingCart(addBookByBookId(props.book.id));
             }}
+            css={buttonStyles}
           >
-            +1
-          </button>
-          <button
-            onClick={() => {
-              setShoppingCart(subtractBookByBookId(props.book.id));
-            }}
-          >
-            -1
+            Add to shopping bag
           </button>
           <br />
-          <button
-            onClick={() => {
-              setShoppingCart(removeBookFromShoppingCart(props.book.id));
-            }}
-          >
-            Remove item from shopping cart
-          </button>
+          <br />
+          <br />
           <br />
           <button
             onClick={() => {
