@@ -1,16 +1,12 @@
 import { css } from '@emotion/react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import {
   addBookByBookId,
-  getShoppingCartCookieValue,
-  parseCookieValue,
   removeBookFromShoppingCart,
   subtractBookByBookId,
 } from '../util/cookies';
-import { getBookById } from '../util/database';
 
 const containerStyles = css`
   padding: 8px 24px;
@@ -133,29 +129,23 @@ const navButtonStyles = (variant = 'main') => css`
   `}
 `;
 
-export default function ShoppingCartPage() {
-  const [shoppingCart, setShoppingCart] = useState(
-    getShoppingCartCookieValue(),
-  );
-
-  useEffect(() => {
-    setShoppingCart(getShoppingCartCookieValue('shoppingcart'));
-  }, [shoppingCart]);
-
+export default function ShoppingCartPage(props) {
   // retrieve book objects for books in shopping cart
-  const bookIdsInShoppingCart = shoppingCart.map((item) => item.id);
-  const booksInShoppingCart = bookIdsInShoppingCart.map((id) =>
-    getBookById(id),
+  const bookIdsInShoppingCart = props.shoppingCart.map((item) => item.id);
+  console.log(bookIdsInShoppingCart);
+
+  const productsInShoppingCart = props.products.filter((product) =>
+    bookIdsInShoppingCart.includes(product.id),
   );
 
   // helper function to calculate subtotals by book, i.e.
   // book price * book quantity in shopping cart
   function getTotalPriceByBook() {
-    const p = booksInShoppingCart.map((b) => parseFloat(b.used_price));
-    const q = shoppingCart.map((i) => parseFloat(i.quantity));
+    const p = productsInShoppingCart.map((book) => book.usedPrice);
+    const q = props.shoppingCart.map((item) => item.quantity);
     const totalByBook = [];
-    for (let x = 0; x < Math.min(p.length, q.length); x++) {
-      totalByBook[x] = p[x] * q[x];
+    for (let i = 0; i < Math.min(p.length, q.length); i++) {
+      totalByBook[i] = p[i] * q[i];
     }
     return totalByBook;
   }
@@ -163,16 +153,19 @@ export default function ShoppingCartPage() {
   const totalByBookOutput = JSON.parse(JSON.stringify(getTotalPriceByBook()));
 
   return (
-    <Layout>
+    <Layout
+      shoppingCart={props.shoppingCart}
+      setShoppingCart={props.setShoppingCart}
+    >
       <Head>
         <title>Shopping Cart</title>
       </Head>
       <div css={containerStyles}>
-        {shoppingCart.length !== 0 ? (
+        {props.shoppingCart.length !== 0 ? (
           <>
             <p css={headingStyles}>
               You have{' '}
-              {shoppingCart
+              {props.shoppingCart
                 .map((item) => item.quantity)
                 .reduce(
                   (accumulator, currentValue) => accumulator + currentValue,
@@ -182,26 +175,26 @@ export default function ShoppingCartPage() {
               items in your shopping bag
             </p>
             <div css={shoppingBagContainer}>
-              {booksInShoppingCart.map((b) => (
+              {productsInShoppingCart.map((b) => (
                 <div key={b.id} css={shoppingBagItemStyles}>
                   <div>
                     <Link href={`/products/${b.id}`}>
                       <a>
                         <img
-                          src={`/${b.image}`}
-                          alt={b.title_short}
+                          src={`/${b.img}`}
+                          alt={b.titleShort}
                           css={imageStyles}
                         />
                       </a>
                     </Link>
                   </div>
                   <div>
-                    <div>{b.title_short}</div>
+                    <div>{b.titleShort}</div>
                     <div>by {b.author}</div>
                     <div key={b.id} css={counterStyles}>
                       <button
                         onClick={() => {
-                          setShoppingCart(subtractBookByBookId(b.id));
+                          props.setShoppingCart(subtractBookByBookId(b.id));
                         }}
                         css={buttonStyles}
                       >
@@ -209,13 +202,13 @@ export default function ShoppingCartPage() {
                       </button>
                       <div>
                         {
-                          shoppingCart.find((item) => item.id === b.id)
+                          props.shoppingCart.find((item) => item.id === b.id)
                             ?.quantity
                         }
                       </div>
                       <button
                         onClick={() => {
-                          setShoppingCart(addBookByBookId(b.id));
+                          props.setShoppingCart(addBookByBookId(b.id));
                         }}
                         css={buttonStyles}
                       >
@@ -226,7 +219,7 @@ export default function ShoppingCartPage() {
                   <div css={rightItemColumnStyles}>
                     <button
                       onClick={() => {
-                        setShoppingCart(removeBookFromShoppingCart(b.id));
+                        props.setShoppingCart(removeBookFromShoppingCart(b.id));
                       }}
                       css={buttonStyles}
                     >
@@ -237,9 +230,9 @@ export default function ShoppingCartPage() {
                     <div key={b.id}>
                       {b.currency}{' '}
                       {(
-                        Number(b.used_price) *
+                        Number(b.usedPrice) *
                         Number(
-                          shoppingCart.find((item) => item.id === b.id)
+                          props.shoppingCart.find((item) => item.id === b.id)
                             .quantity,
                         )
                       ).toFixed(2)}
@@ -292,12 +285,14 @@ export default function ShoppingCartPage() {
   );
 }
 
-export async function getServerSideProps(context) {
-  const { books } = await import('../util/database');
+export async function getServerSideProps() {
+  const { getProducts } = await import('../util/database');
+
+  const products = await getProducts();
+
   return {
     props: {
-      books,
-      quantity: parseCookieValue(context.req.cookies.quantity, []),
+      products,
     },
   };
 }

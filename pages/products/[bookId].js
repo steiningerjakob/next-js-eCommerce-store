@@ -1,15 +1,10 @@
 import { css } from '@emotion/react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ReactStars from 'react-rating-stars-component';
 import Layout from '../../components/Layout';
-import {
-  addBookByBookId,
-  clearShoppingCart,
-  getShoppingCartCookieValue,
-  parseCookieValue,
-} from '../../util/cookies';
+import { addBookByBookId, parseCookieValue } from '../../util/cookies';
 
 const gridStyles = css`
   display: grid;
@@ -85,16 +80,7 @@ const buttonStyles = css`
 `;
 
 export default function ProductDetails(props) {
-  // state variables
-  const [shoppingCart, setShoppingCart] = useState(
-    getShoppingCartCookieValue(),
-  );
   const [buttonIsClicked, setButtonIsClicked] = useState(false);
-
-  // function to re-render upon change of shoppingCart variable
-  useEffect(() => {
-    setShoppingCart(getShoppingCartCookieValue('shoppingcart'));
-  }, [shoppingCart]);
 
   // function to display a delivery date (1 week from current date)
   function getDeliveryDate() {
@@ -108,49 +94,55 @@ export default function ProductDetails(props) {
   }
 
   return (
-    <Layout>
+    <Layout
+      shoppingCart={props.shoppingCart}
+      setShoppingCart={props.setShoppingCart}
+    >
       <Head>
-        <title>{props.book.title_short}</title>
+        <title>{props.singleProduct.titleShort}</title>
       </Head>
       <div css={gridStyles}>
         <section>
-          <img src={`/${props.book.image}`} alt={props.book.title_short} />
+          <img
+            src={`/${props.singleProduct.img}`}
+            alt={props.singleProduct.titleShort}
+          />
         </section>
         <section>
-          <p css={headingStyles}>{props.book.title_short}</p>
-          <p css={authorStyles}>by {props.book.author}</p>
+          <p css={headingStyles}>{props.singleProduct.titleShort}</p>
+          <p css={authorStyles}>by {props.singleProduct.author}</p>
           <p css={headingStyles}>Product details:</p>
           <p css={ratingStyles}>
             <div>
               <ReactStars
                 count={5}
                 size={24}
-                value={parseFloat(props.book.star_rating)}
+                value={parseFloat(props.singleProduct.starRating)}
                 isHalf={true}
                 edit={false}
               />
             </div>
-            <div>{props.book.reviews} reviews</div>
+            <div>{props.singleProduct.reviews} reviews</div>
           </p>
           <p>
             <span css={boldStyles}>Publisher: </span>
-            {props.book.publisher}
+            {props.singleProduct.publisher}
           </p>
           <p>
             <span css={boldStyles}>Publication date: </span>
-            {props.book.publication_date}
+            {props.singleProduct.publicationDate}
           </p>
           <p>
             <span css={boldStyles}>Language: </span>
-            {props.book.language}
+            {props.singleProduct.lang}
           </p>
           <p>
             <span css={boldStyles}>Pages: </span>
-            {props.book.pages}
+            {props.singleProduct.pages}
           </p>
           <p>
             <span css={boldStyles}>ISBN: </span>
-            {props.book.isbn}
+            {props.singleProduct.isbn}
           </p>
           <p>
             <span css={boldStyles}>Description: </span>
@@ -160,16 +152,17 @@ export default function ProductDetails(props) {
         <section>
           <p css={headingStyles}>Buy used from us:</p>
           <p css={priceStyles}>
-            {props.book.currency} {parseFloat(props.book.used_price).toFixed(2)}
+            {props.singleProduct.currency}{' '}
+            {parseFloat(props.singleProduct.usedPrice).toFixed(2)}
           </p>
           <p css={amazonStyles}>
-            (Amazon's price: {props.book.currency}{' '}
-            {parseFloat(props.book.new_price).toFixed(2)})
+            (Amazon's price: {props.singleProduct.currency}{' '}
+            {parseFloat(props.singleProduct.newPrice).toFixed(2)})
           </p>
           <p>Expected delivery date: {getDeliveryDate()}</p>
           <button
             onClick={() => {
-              setShoppingCart(addBookByBookId(props.book.id));
+              props.setShoppingCart(addBookByBookId(props.singleProduct.id));
               setButtonIsClicked(true);
             }}
             css={buttonStyles}
@@ -195,12 +188,13 @@ export default function ProductDetails(props) {
 export async function getServerSideProps(context) {
   const bookId = context.query.bookId;
 
-  const { books } = await import('../../util/database');
-  const book = books.find((b) => b.id === bookId);
+  const { getProductById } = await import('../../util/database');
+
+  const singleProduct = await getProductById(bookId);
+
   return {
     props: {
-      book,
-      books,
+      singleProduct: singleProduct,
       quantity: parseCookieValue(context.req.cookies.quantity, []),
     },
   };

@@ -6,14 +6,9 @@
 import { css } from '@emotion/react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import ReactStars from 'react-rating-stars-component';
 import Layout from '../../components/Layout';
-import {
-  addBookByBookId,
-  getShoppingCartCookieValue,
-} from '../../util/cookies';
-import { getBooksByGenre } from '../../util/database';
+import { addBookByBookId } from '../../util/cookies';
 
 const containerStyles = css`
   margin: 0px 16px;
@@ -94,29 +89,20 @@ const starStyles = css`
 
 export default function Products(props) {
   // creating list of unique genres from books array
-  const uniqueGenres = [...new Set(props.books.map((book) => book.genre))];
-  const uniqueLanguages = [
-    ...new Set(props.books.map((book) => book.language)),
-  ];
+  const uniqueGenres = [...new Set(props.products.map((book) => book.genre))];
+  const uniqueLanguages = [...new Set(props.products.map((book) => book.lang))];
 
-  // state variable
-  const [shoppingCart, setShoppingCart] = useState(
-    getShoppingCartCookieValue(),
-  );
+  // // state variables (not working for uncheck and multicheck at the moment)
+  // const [genreFilter, setGenreFilter] = useState(null);
 
-  // function to re-render upon change of shoppingCart variable
-  useEffect(() => {
-    setShoppingCart(getShoppingCartCookieValue('shoppingcart'));
-  }, [shoppingCart]);
-
-  // state variables (not working for uncheck and multicheck at the moment)
-  const [genreFilter, setGenreFilter] = useState(null);
-
-  // retrieve book objects filtered by genre using helper function
-  const booksByGenre = getBooksByGenre(genreFilter);
+  // // retrieve book objects filtered by genre using helper function
+  // const booksByGenre = getProductsByGenre(genreFilter);
 
   return (
-    <Layout>
+    <Layout
+      shoppingCart={props.shoppingCart}
+      setShoppingCart={props.setShoppingCart}
+    >
       <Head>
         <title>Products</title>
       </Head>
@@ -129,9 +115,9 @@ export default function Products(props) {
                 <input
                   type="checkbox"
                   value={g}
-                  onChange={(event) =>
-                    setGenreFilter(event.currentTarget.value)
-                  }
+                  // onChange={(event) =>
+                  //   setGenreFilter(event.currentTarget.value)
+                  // }
                 />
                 {g}
               </li>
@@ -146,15 +132,46 @@ export default function Products(props) {
           </div>
         </div>
         <div css={productListContainer}>
-          {genreFilter === null
-            ? props.books.map((book) => (
+          {props.products.map((book) => (
+            <div css={productContainer} key={`book-${book.id}`}>
+              <Link href={`/products/${book.id}`}>
+                <a>
+                  <img
+                    css={imgStyles}
+                    src={`/${book.img}`}
+                    alt={book.titleShort}
+                  />{' '}
+                </a>
+              </Link>
+              <button
+                onClick={() => {
+                  props.setShoppingCart(addBookByBookId(book.id));
+                }}
+                css={buttonStyles}
+              >
+                +
+              </button>
+              <p>{book.titleShort}</p>
+              <p> by {book.author}</p>
+              <div css={starStyles}>
+                <ReactStars
+                  count={5}
+                  size={15}
+                  value={book.starRating}
+                  isHalf={true}
+                  edit={false}
+                />
+              </div>
+            </div>
+          ))}
+          {/* : booksByGenre.map((book) => (
                 <div css={productContainer} key={`book-${book.id}`}>
                   <Link href={`/products/${book.id}`}>
                     <a>
                       <img
                         css={imgStyles}
-                        src={`/${book.image}`}
-                        alt={book.title_short}
+                        src={`/${book.img}`}
+                        alt={book.titleShort}
                       />{' '}
                     </a>
                   </Link>
@@ -166,51 +183,19 @@ export default function Products(props) {
                   >
                     +
                   </button>
-                  <p>{book.title_short}</p>
+                  <p>{book.titleShort}</p>
                   <p> by {book.author}</p>
                   <div css={starStyles}>
                     <ReactStars
                       count={5}
                       size={15}
-                      value={parseFloat(book.star_rating)}
+                      value={book.starRating}
                       isHalf={true}
                       edit={false}
                     />
                   </div>
                 </div>
-              ))
-            : booksByGenre.map((book) => (
-                <div css={productContainer} key={`book-${book.id}`}>
-                  <Link href={`/products/${book.id}`}>
-                    <a>
-                      <img
-                        css={imgStyles}
-                        src={`/${book.image}`}
-                        alt={book.title_short}
-                      />{' '}
-                    </a>
-                  </Link>
-                  <button
-                    // onClick={() => {
-                    //   setShoppingCart(addBookByBookId(book.id));
-                    // }}
-                    css={buttonStyles}
-                  >
-                    +
-                  </button>
-                  <p>{book.title_short}</p>
-                  <p> by {book.author}</p>
-                  <div css={starStyles}>
-                    <ReactStars
-                      count={5}
-                      size={15}
-                      value={parseFloat(book.star_rating)}
-                      isHalf={true}
-                      edit={false}
-                    />
-                  </div>
-                </div>
-              ))}
+              ))} */}
         </div>
       </div>
     </Layout>
@@ -218,10 +203,13 @@ export default function Products(props) {
 }
 
 export async function getServerSideProps() {
-  const { books } = await import('../../util/database');
+  const { getProducts } = await import('../../util/database');
+
+  const products = await getProducts();
+
   return {
     props: {
-      books,
+      products,
     },
   };
 }

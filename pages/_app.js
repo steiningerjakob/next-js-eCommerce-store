@@ -1,7 +1,18 @@
 import { css, Global } from '@emotion/react';
 import Head from 'next/head';
+import { useEffect, useState } from 'react';
+import { getShoppingCartCookieValue } from '../util/cookies';
 
 function MyApp({ Component, pageProps }) {
+  // declare globally accessible state variable
+  const [shoppingCart, setShoppingCart] = useState([]);
+
+  // update state variable on page reload to sync up server with
+  // front-end
+  useEffect(() => {
+    setShoppingCart(getShoppingCartCookieValue());
+  }, []);
+
   return (
     <>
       <Global
@@ -23,7 +34,12 @@ function MyApp({ Component, pageProps }) {
       <Head>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Component {...pageProps} />
+      {/* pass props for state variable shopping cart */}
+      <Component
+        {...pageProps}
+        shoppingCart={shoppingCart}
+        setShoppingCart={setShoppingCart}
+      />
     </>
   );
 }

@@ -4,8 +4,6 @@
 
 import { css } from '@emotion/react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { getShoppingCartCookieValue } from '../util/cookies';
 
 const headerStyles = css`
   display: flex;
@@ -38,15 +36,7 @@ const headerStyles = css`
   }
 `;
 
-export default function Header() {
-  const [shoppingCart, setShoppingCart] = useState(
-    getShoppingCartCookieValue(),
-  );
-
-  useEffect(() => {
-    setShoppingCart(getShoppingCartCookieValue('shoppingcart'));
-  }, [shoppingCart]);
-
+export default function Header(props) {
   return (
     <header css={headerStyles}>
       <Link href="/">
@@ -68,7 +58,7 @@ export default function Header() {
           <Link href="/shoppingcart">
             <a>
               Shopping Cart (
-              {shoppingCart
+              {props.shoppingCart
                 .map((item) => item.quantity)
                 .reduce(
                   (accumulator, currentValue) => accumulator + currentValue,

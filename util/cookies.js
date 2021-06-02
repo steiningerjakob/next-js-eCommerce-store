@@ -18,6 +18,7 @@ export function addBookByBookId(bookId) {
     });
   }
   cookies.set('shoppingcart', newCookieValue);
+  return newCookieValue;
 }
 
 export function subtractBookByBookId(bookId) {
@@ -38,6 +39,7 @@ export function subtractBookByBookId(bookId) {
     });
   }
   cookies.set('shoppingcart', newCookieValue);
+  return newCookieValue;
 }
 
 export function removeBookFromShoppingCart(bookId) {
@@ -51,12 +53,14 @@ export function removeBookFromShoppingCart(bookId) {
     return newCookieValue;
   }
   cookies.set('shoppingcart', newCookieValue);
+  return newCookieValue;
 }
 
 export function clearShoppingCart() {
   const newCookieValue = [...getShoppingCartCookieValue()];
   newCookieValue.length = 0;
   cookies.set('shoppingcart', newCookieValue);
+  return newCookieValue;
 }
 
 export function parseCookieValue(value, defaultValue) {

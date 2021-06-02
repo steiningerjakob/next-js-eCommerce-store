@@ -9,7 +9,11 @@ const containerStyles = css`
 export default function Layout(props) {
   return (
     <>
-      <Header />
+      {/* pass props here */}
+      <Header
+        shoppingCart={props.shoppingCart}
+        setShoppingCart={props.setShoppingCart}
+      />
       <div css={containerStyles}>{props.children}</div>
       <Footer />
     </>

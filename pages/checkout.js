@@ -5,9 +5,12 @@
 import Head from 'next/head';
 import Layout from '../components/Layout';
 
-export default function Checkout() {
+export default function Checkout(props) {
   return (
-    <Layout>
+    <Layout
+      shoppingCart={props.shoppingCart}
+      setShoppingCart={props.setShoppingCart}
+    >
       <Head>
         <title>Checkout</title>
       </Head>

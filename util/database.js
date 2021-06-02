@@ -1,3 +1,55 @@
+import camelcaseKeys from 'camelcase-keys';
+import dotenvSafe from 'dotenv-safe';
+import postgres from 'postgres';
+
+// Read Postgres secret connection from .env file
+dotenvSafe.config();
+
+// Connect to the database
+const sql = postgres();
+
+// Perform query
+export async function getProducts() {
+  const products = await sql`SELECT * FROM products`;
+  return products.map((product) => camelcaseKeys(product));
+}
+
+export async function getProductById(id) {
+  const singleProduct = await sql`
+    SELECT
+    *
+    FROM
+    products
+    WHERE
+    id = ${Number(id)}
+  `;
+  return singleProduct.map((product) => camelcaseKeys(product))[0];
+}
+
+export async function getProductsByGenre(id) {
+  const products = await sql`
+    SELECT
+    *
+    FROM
+    products
+    WHERE
+    id = ${Number(id)}
+  `;
+  return products.map((product) => camelcaseKeys(product));
+}
+
+export async function getProductByLanguage(id) {
+  const products = await sql`
+    SELECT
+    *
+    FROM
+    products
+    WHERE
+    id = ${Number(id)}
+  `;
+  return products.map((product) => camelcaseKeys(product));
+}
+
 export const books = [
   {
     id: '1',
@@ -181,19 +233,6 @@ export const books = [
     new_price: '25.00',
   },
 ];
-
-// array with unique genres for category filter -->
-// currently hard coded (to be refined)
-export const uniqueGenres = [
-  'Fantasy',
-  'Education',
-  'Contemporary Fiction',
-  'Historical Thrillers',
-  'Political Fiction',
-  'Occult',
-];
-
-export const uniqueLanguages = ['English', 'German'];
 
 // helper functions to select specific book objects from array
 export function getBookById(id) {
