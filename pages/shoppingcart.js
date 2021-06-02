@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import {
@@ -12,14 +13,21 @@ import {
 import { getBookById } from '../util/database';
 
 const containerStyles = css`
-  margin: 24px;
-  width: 100%;
+  padding: 8px 24px;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  margin-bottom: 32px;
+`;
+
+const headingStyles = css`
+  font-size: 1.5em;
+  font-weight: 600;
+  margin-bottom: 24px;
 `;
 
 const shoppingBagContainer = css`
-  width: 512px;
+  width: 50%;
   background-color: #f5f5f5;
   box-shadow: 1px 1px 8px 1px #dcdcdc;
   border-radius: 8px;
@@ -41,12 +49,13 @@ const imageStyles = css`
 const counterStyles = css`
   display: flex;
   flex-direction: row;
-  margin-top: 56px;
+  margin-top: 52px;
   text-align: center;
 
   > div {
     display: flex;
     align-items: center;
+    margin: 0 16px;
   }
 `;
 
@@ -84,13 +93,44 @@ const buttonStyles = css`
   text-align: center;
   border-radius: 4px;
   border: 1px solid #dcdcdc;
-  margin: 0 12px;
   width: 32px;
   height: 24px;
 
   :hover {
     cursor: pointer;
   }
+`;
+
+const buttonContainer = css`
+  width: 50%;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const navButtonStyles = (variant = 'main') => css`
+  font-weight: 600;
+  font-size: 1.1em;
+  background-color: #153243;
+  color: white;
+  text-align: center;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  box-shadow: 1px 1px 8px 1px #dcdcdc;
+  margin: 24px 0;
+  width: 272px;
+  height: 72px;
+
+  :hover {
+    opacity: 0.8;
+    cursor: pointer;
+  }
+
+  ${variant === 'secondary' &&
+  css`
+    background-color: white;
+    color: #153243;
+    border: 1px solid #153243;
+  `}
 `;
 
 export default function ShoppingCartPage() {
@@ -128,76 +168,125 @@ export default function ShoppingCartPage() {
         <title>Shopping Cart</title>
       </Head>
       <div css={containerStyles}>
-        <h1>Your shopping bag</h1>
-        <div css={shoppingBagContainer}>
-          {booksInShoppingCart.map((b) => (
-            <div key={b.id} css={shoppingBagItemStyles}>
-              <div>
-                <img
-                  src={`/${b.image}`}
-                  alt={b.title_short}
-                  css={imageStyles}
-                />
-              </div>
-              <div>
-                <div>{b.title_short}</div>
-                <div>by {b.author}</div>
-                <div key={b.id} css={counterStyles}>
-                  <button
-                    onClick={() => {
-                      setShoppingCart(subtractBookByBookId(b.id));
-                    }}
-                    css={buttonStyles}
-                  >
-                    -
-                  </button>
-                  <div>
-                    {shoppingCart.find((item) => item.id === b.id)?.quantity}
-                  </div>
-                  <button
-                    onClick={() => {
-                      setShoppingCart(addBookByBookId(b.id));
-                    }}
-                    css={buttonStyles}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-              <div css={rightItemColumnStyles}>
-                <button
-                  onClick={() => {
-                    setShoppingCart(removeBookFromShoppingCart(b.id));
-                  }}
-                  css={buttonStyles}
-                >
-                  <span role="img" aria-label="trash bin">
-                    🗑️
-                  </span>
-                </button>
-                <div key={b.id}>
-                  {b.currency}{' '}
-                  {Number(b.used_price) *
-                    Number(
-                      shoppingCart.find((item) => item.id === b.id).quantity,
-                    )}
-                </div>
-              </div>
-            </div>
-          ))}
-          <div css={totalStyles}>
-            <div>Total:</div>
-            <div>
-              €{' '}
-              {totalByBookOutput
+        {shoppingCart.length !== 0 ? (
+          <>
+            <p css={headingStyles}>
+              You have{' '}
+              {shoppingCart
+                .map((item) => item.quantity)
                 .reduce(
                   (accumulator, currentValue) => accumulator + currentValue,
                   0,
                 )
-                .toFixed(2)}
+                .toFixed(0)}{' '}
+              items in your shopping bag
+            </p>
+            <div css={shoppingBagContainer}>
+              {booksInShoppingCart.map((b) => (
+                <div key={b.id} css={shoppingBagItemStyles}>
+                  <div>
+                    <Link href={`/products/${b.id}`}>
+                      <a>
+                        <img
+                          src={`/${b.image}`}
+                          alt={b.title_short}
+                          css={imageStyles}
+                        />
+                      </a>
+                    </Link>
+                  </div>
+                  <div>
+                    <div>{b.title_short}</div>
+                    <div>by {b.author}</div>
+                    <div key={b.id} css={counterStyles}>
+                      <button
+                        onClick={() => {
+                          setShoppingCart(subtractBookByBookId(b.id));
+                        }}
+                        css={buttonStyles}
+                      >
+                        -
+                      </button>
+                      <div>
+                        {
+                          shoppingCart.find((item) => item.id === b.id)
+                            ?.quantity
+                        }
+                      </div>
+                      <button
+                        onClick={() => {
+                          setShoppingCart(addBookByBookId(b.id));
+                        }}
+                        css={buttonStyles}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  <div css={rightItemColumnStyles}>
+                    <button
+                      onClick={() => {
+                        setShoppingCart(removeBookFromShoppingCart(b.id));
+                      }}
+                      css={buttonStyles}
+                    >
+                      <span role="img" aria-label="trash bin">
+                        🗑️
+                      </span>
+                    </button>
+                    <div key={b.id}>
+                      {b.currency}{' '}
+                      {(
+                        Number(b.used_price) *
+                        Number(
+                          shoppingCart.find((item) => item.id === b.id)
+                            .quantity,
+                        )
+                      ).toFixed(2)}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <div css={totalStyles}>
+                <div>Total:</div>
+                <div>
+                  €{' '}
+                  {totalByBookOutput
+                    .reduce(
+                      (accumulator, currentValue) => accumulator + currentValue,
+                      0,
+                    )
+                    .toFixed(2)}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+            <div css={buttonContainer}>
+              <Link href="../../checkout">
+                <a>
+                  <button css={navButtonStyles()}>Proceed to checkout</button>
+                </a>
+              </Link>
+              <Link href="../../products">
+                <a>
+                  <button css={navButtonStyles('secondary')}>
+                    Continue shopping
+                  </button>
+                </a>
+              </Link>
+            </div>
+          </>
+        ) : (
+          <>
+            <p css={headingStyles}>
+              Oh snap... there's nothing in your bag yet :(
+            </p>
+            <Link href="../../products">
+              <a>
+                <button css={navButtonStyles()}>Continue shopping</button>
+              </a>
+            </Link>
+          </>
+        )}
       </div>
     </Layout>
   );

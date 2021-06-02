@@ -1,12 +1,18 @@
-// ToDo: make filter work also on uncheck and adding
-// additional filter (multiple checkboc problem?)
+// ToDos: make filter work also on uncheck and adding
+// 1) additional filter (multiple checkboc problem?)
+// 2) investigate potential performance issues
+// (site sometimes becomes unresponsive)
 
 import { css } from '@emotion/react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactStars from 'react-rating-stars-component';
 import Layout from '../../components/Layout';
+import {
+  addBookByBookId,
+  getShoppingCartCookieValue,
+} from '../../util/cookies';
 import { getBooksByGenre } from '../../util/database';
 
 const containerStyles = css`
@@ -61,26 +67,30 @@ const imgStyles = css`
   box-shadow: 1px 1px 8px 1px #dcdcdc;
 `;
 
+const buttonStyles = css`
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  font-weight: 500;
+  background-color: #284b63;
+  color: white;
+  text-align: center;
+  border-radius: 4px;
+  border: 1px solid white;
+  box-shadow: 1px 1px 8px 1px #dcdcdc;
+  width: 32px;
+  height: 24px;
+
+  :hover {
+    cursor: pointer;
+  }
+`;
+
 const starStyles = css`
   position: absolute;
   bottom: 5%;
   left: 30%;
 `;
-
-// const buttonStyles = css`
-//   font-weight: 500;
-//   background-color: white;
-//   text-align: center;
-//   border-radius: 4px;
-//   border: 1px solid #dcdcdc;
-//   margin: 0 12px;
-//   width: 32px;
-//   height: 24px;
-
-//   :hover {
-//     cursor: pointer;
-//   }
-// `;
 
 export default function Products(props) {
   // creating list of unique genres from books array
@@ -89,15 +99,15 @@ export default function Products(props) {
     ...new Set(props.books.map((book) => book.language)),
   ];
 
-  // // state variable
-  // const [shoppingCart, setShoppingCart] = useState(
-  //   getShoppingCartCookieValue(),
-  // );
+  // state variable
+  const [shoppingCart, setShoppingCart] = useState(
+    getShoppingCartCookieValue(),
+  );
 
-  // // function to re-render upon change of shoppingCart variable
-  // useEffect(() => {
-  //   setShoppingCart(getShoppingCartCookieValue('shoppingcart'));
-  // }, [shoppingCart]);
+  // function to re-render upon change of shoppingCart variable
+  useEffect(() => {
+    setShoppingCart(getShoppingCartCookieValue('shoppingcart'));
+  }, [shoppingCart]);
 
   // state variables (not working for uncheck and multicheck at the moment)
   const [genreFilter, setGenreFilter] = useState(null);
@@ -148,14 +158,14 @@ export default function Products(props) {
                       />{' '}
                     </a>
                   </Link>
-                  {/* <button
+                  <button
                     onClick={() => {
                       setShoppingCart(addBookByBookId(book.id));
                     }}
                     css={buttonStyles}
                   >
                     +
-                  </button> */}
+                  </button>
                   <p>{book.title_short}</p>
                   <p> by {book.author}</p>
                   <div css={starStyles}>
@@ -180,6 +190,14 @@ export default function Products(props) {
                       />{' '}
                     </a>
                   </Link>
+                  <button
+                    // onClick={() => {
+                    //   setShoppingCart(addBookByBookId(book.id));
+                    // }}
+                    css={buttonStyles}
+                  >
+                    +
+                  </button>
                   <p>{book.title_short}</p>
                   <p> by {book.author}</p>
                   <div css={starStyles}>

@@ -64,10 +64,11 @@ const buttonStyles = css`
   background-color: #153243;
   color: white;
   text-align: center;
-  padding: 24px 64px;
   border-radius: 8px;
   border: none;
-  margin: 16px 0;
+  margin: 24px 0;
+  width: 304px;
+  height: 72px;
 
   :hover {
     opacity: 0.8;
@@ -76,6 +77,10 @@ const buttonStyles = css`
 
   :focus {
     background-color: #81b29a;
+    :hover {
+      opacity: 1;
+      cursor: default;
+    }
   }
 `;
 
@@ -84,12 +89,14 @@ export default function ProductDetails(props) {
   const [shoppingCart, setShoppingCart] = useState(
     getShoppingCartCookieValue(),
   );
+  const [buttonIsClicked, setButtonIsClicked] = useState(false);
 
   // function to re-render upon change of shoppingCart variable
   useEffect(() => {
     setShoppingCart(getShoppingCartCookieValue('shoppingcart'));
   }, [shoppingCart]);
 
+  // function to display a delivery date (1 week from current date)
   function getDeliveryDate() {
     const today = new Date();
     const deliveryDate = new Date(
@@ -99,6 +106,7 @@ export default function ProductDetails(props) {
     );
     return JSON.stringify(deliveryDate).split('T')[0].split('"')[1];
   }
+
   return (
     <Layout>
       <Head>
@@ -162,32 +170,22 @@ export default function ProductDetails(props) {
           <button
             onClick={() => {
               setShoppingCart(addBookByBookId(props.book.id));
+              setButtonIsClicked(true);
             }}
             css={buttonStyles}
           >
             Add to shopping bag
           </button>
-          <br />
-          <br />
-          <br />
-          <br />
-          <button
-            onClick={() => {
-              setShoppingCart(clearShoppingCart());
-            }}
-          >
-            Clear shopping cart
-          </button>
-          <div>
-            {JSON.stringify(shoppingCart)}
-            <br />
-            {shoppingCart.find((item) => item.id === props.book.id)?.quantity}
-          </div>
-          <Link href="../../shoppingcart">
-            <a>
-              <button>Go to shopping cart</button>
-            </a>
-          </Link>
+          {/* conditional rendering upon button click */}
+          {buttonIsClicked === true ? (
+            <Link href="../../shoppingcart">
+              <a>
+                <button css={buttonStyles}>Proceed to shopping bag</button>
+              </a>
+            </Link>
+          ) : (
+            ''
+          )}
         </section>
       </div>
     </Layout>

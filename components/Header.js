@@ -1,10 +1,16 @@
+// ToDos:
+// 1) add icons to links (instead of words)
+// 2) add user authentication functionality (Clerk vs. self-built)
+
 import { css } from '@emotion/react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { getShoppingCartCookieValue } from '../util/cookies';
 
 const headerStyles = css`
   display: flex;
-  padding: 16px 32px;
-  background-color: #b4b8ab;
+  padding: 16px 40px;
+  background-color: #81b29a;
   position: sticky;
   top: 0;
   left: 0;
@@ -20,7 +26,7 @@ const headerStyles = css`
 
   a {
     text-decoration: none;
-    color: black;
+    color: lightgrey;
     margin-right: 24px;
     :hover {
       color: white;
@@ -33,6 +39,14 @@ const headerStyles = css`
 `;
 
 export default function Header() {
+  const [shoppingCart, setShoppingCart] = useState(
+    getShoppingCartCookieValue(),
+  );
+
+  useEffect(() => {
+    setShoppingCart(getShoppingCartCookieValue('shoppingcart'));
+  }, [shoppingCart]);
+
   return (
     <header css={headerStyles}>
       <Link href="/">
@@ -52,7 +66,17 @@ export default function Header() {
 
         <div>
           <Link href="/shoppingcart">
-            <a>Shopping Cart</a>
+            <a>
+              Shopping Cart (
+              {shoppingCart
+                .map((item) => item.quantity)
+                .reduce(
+                  (accumulator, currentValue) => accumulator + currentValue,
+                  0,
+                )
+                .toFixed(0)}
+              )
+            </a>
           </Link>
         </div>
       </div>
