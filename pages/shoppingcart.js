@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Layout from '../components/Layout';
 import {
   addBookByBookId,
+  clearShoppingCart,
   removeBookFromShoppingCart,
   subtractBookByBookId,
 } from '../util/cookies';
@@ -126,13 +127,13 @@ const navButtonStyles = (variant = 'main') => css`
     background-color: white;
     color: #153243;
     border: 1px solid #153243;
+    width: 144px;
   `}
 `;
 
 export default function ShoppingCartPage(props) {
   // retrieve book objects for books in shopping cart
   const bookIdsInShoppingCart = props.shoppingCart.map((item) => item.id);
-  console.log(bookIdsInShoppingCart);
 
   const productsInShoppingCart = props.products.filter((product) =>
     bookIdsInShoppingCart.includes(product.id),
@@ -266,6 +267,14 @@ export default function ShoppingCartPage(props) {
                   </button>
                 </a>
               </Link>
+              <button
+                css={navButtonStyles('secondary')}
+                onClick={() => {
+                  props.setShoppingCart([]);
+                }}
+              >
+                Clear bag
+              </button>
             </div>
           </>
         ) : (
@@ -286,9 +295,9 @@ export default function ShoppingCartPage(props) {
 }
 
 export async function getServerSideProps() {
-  const { getProducts } = await import('../util/database');
+  const { getAllProducts } = await import('../util/database');
 
-  const products = await getProducts();
+  const products = await getAllProducts();
 
   return {
     props: {

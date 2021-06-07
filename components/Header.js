@@ -1,8 +1,14 @@
 // ToDos:
-// 1) add icons to links (instead of words)
+// 1) replace text links with icons
 // 2) add user authentication functionality (Clerk vs. self-built)
 
 import { css } from '@emotion/react';
+// import {
+//   faSearch,
+//   faShoppingBag,
+//   faUserCircle,
+// } from '@fortawesome/free-solid-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 
 const headerStyles = css`
@@ -23,9 +29,11 @@ const headerStyles = css`
   }
 
   a {
+    display: flex;
+    align-items: center;
     text-decoration: none;
     color: lightgrey;
-    margin-right: 24px;
+    margin-right: 32px;
     :hover {
       color: white;
     }
@@ -35,6 +43,21 @@ const headerStyles = css`
     margin-left: auto;
   }
 `;
+
+// const searchFieldStyles = css`
+//   height: 40px;
+//   width: 296px;
+//   padding: 8px 8px;
+//   margin: 0 8px;
+//   border-radius: 8px;
+//   border: 1px solid #dcdcdc;
+//   background-color: white;
+//   text-align: left;
+
+//   > span {
+//     color: lightgrey;
+//   }
+// `;
 
 export default function Header(props) {
   return (
@@ -47,6 +70,14 @@ export default function Header(props) {
           <a>All Books</a>
         </Link>
       </div>
+      {/* <div>
+        <input
+          id="searchField"
+          placeholder="Title, author, ISBN"
+          css={searchFieldStyles}
+        />
+        <FontAwesomeIcon icon={faSearch} size="2x" />
+      </div> */}
       <div>
         <div>
           <Link href="/login">
@@ -57,7 +88,7 @@ export default function Header(props) {
         <div>
           <Link href="/shoppingcart">
             <a>
-              Shopping Cart (
+              Shopping Bag (
               {props.shoppingCart
                 .map((item) => item.quantity)
                 .reduce(

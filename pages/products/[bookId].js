@@ -146,7 +146,7 @@ export default function ProductDetails(props) {
           </p>
           <p>
             <span css={boldStyles}>Description: </span>
-            [Yet to be added to database]
+            {props.singleProduct.descript}
           </p>
         </section>
         <section>

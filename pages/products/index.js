@@ -1,11 +1,10 @@
 // ToDos: make filter work also on uncheck and adding
 // 1) additional filter (multiple checkboc problem?)
-// 2) investigate potential performance issues
-// (site sometimes becomes unresponsive)
 
 import { css } from '@emotion/react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useState } from 'react';
 import ReactStars from 'react-rating-stars-component';
 import Layout from '../../components/Layout';
 import { addBookByBookId } from '../../util/cookies';
@@ -14,12 +13,13 @@ const containerStyles = css`
   margin: 0px 16px;
   width: 100%;
   display: flex;
+  flex: auto;
 `;
 
 const filterContainer = css`
   margin-left: 0;
   padding: 16px 0;
-  width: 640px;
+  min-width: 208px;
 `;
 
 const ulStyles = css`
@@ -39,6 +39,7 @@ const liStyles = css`
 
 const productListContainer = css`
   display: flex;
+  justify-content: flex-start;
   flex-wrap: wrap;
   margin-left: 24px;
 `;
@@ -55,8 +56,8 @@ const productContainer = css`
 `;
 
 const imgStyles = css`
-  max-width: 50%;
-  max-height: 50%;
+  max-width: 44%;
+  max-height: 44%;
   margin: 5px 0px;
   border: 1px solid #dcdcdc;
   box-shadow: 1px 1px 8px 1px #dcdcdc;
@@ -81,22 +82,34 @@ const buttonStyles = css`
   }
 `;
 
+const titleStyles = css`
+  font-weight: 600;
+`;
+
+const priceStyles = css`
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #153243;
+`;
+
 const starStyles = css`
   position: absolute;
-  bottom: 5%;
-  left: 30%;
+  bottom: 8%;
+  left: 35%;
 `;
 
 export default function Products(props) {
-  // creating list of unique genres from books array
-  const uniqueGenres = [...new Set(props.products.map((book) => book.genre))];
-  const uniqueLanguages = [...new Set(props.products.map((book) => book.lang))];
+  // create list of unique genres from products array
+  const uniqueGenres = [
+    ...new Set(props.products.map((book) => book.genre)),
+  ].concat(...['All genres']);
+  const uniqueLanguages = [
+    ...new Set(props.products.map((book) => book.lang)),
+  ].concat(...['All languages']);
 
-  // // state variables (not working for uncheck and multicheck at the moment)
-  // const [genreFilter, setGenreFilter] = useState(null);
-
-  // // retrieve book objects filtered by genre using helper function
-  // const booksByGenre = getProductsByGenre(genreFilter);
+  // // state variables
+  const [genreFilter, setGenreFilter] = useState('All genres');
+  const [languageFilter, setLanguageFilter] = useState('All languages');
 
   return (
     <Layout
@@ -109,93 +122,92 @@ export default function Products(props) {
       <div css={containerStyles}>
         <div css={filterContainer}>
           <div>
-            <ul css={ulStyles}>All Genres</ul>
-            {uniqueGenres.map((g) => (
-              <li key={`genre-${g.id}`} css={liStyles}>
+            <ul css={ulStyles}>Filter by Genre</ul>
+            {uniqueGenres.map((genre) => (
+              <li key={`genre-${genre.id}`} css={liStyles}>
                 <input
-                  type="checkbox"
-                  value={g}
-                  // onChange={(event) =>
-                  //   setGenreFilter(event.currentTarget.value)
-                  // }
+                  type="radio"
+                  value={genre}
+                  name="genreFilter"
+                  onChange={(event) =>
+                    setGenreFilter(event.currentTarget.value)
+                  }
                 />
-                {g}
+                {genre}
               </li>
             ))}
-            <ul css={ulStyles}>All Languages</ul>
-            {uniqueLanguages.map((l) => (
-              <li key={`genre-${l.id}`} css={liStyles}>
-                <input type="checkbox" value={l} />
-                {l}
+            <ul css={ulStyles}>Filter by Language</ul>
+            {uniqueLanguages.map((lang) => (
+              <li key={`lang-${lang.id}`} css={liStyles}>
+                <input
+                  type="radio"
+                  value={lang}
+                  name="languageFilter"
+                  onChange={(event) =>
+                    setLanguageFilter(event.currentTarget.value)
+                  }
+                />
+                {lang}
               </li>
             ))}
           </div>
         </div>
         <div css={productListContainer}>
-          {props.products.map((book) => (
-            <div css={productContainer} key={`book-${book.id}`}>
-              <Link href={`/products/${book.id}`}>
-                <a>
-                  <img
-                    css={imgStyles}
-                    src={`/${book.img}`}
-                    alt={book.titleShort}
-                  />{' '}
-                </a>
-              </Link>
-              <button
-                onClick={() => {
-                  props.setShoppingCart(addBookByBookId(book.id));
-                }}
-                css={buttonStyles}
-              >
-                +
-              </button>
-              <p>{book.titleShort}</p>
-              <p> by {book.author}</p>
-              <div css={starStyles}>
-                <ReactStars
-                  count={5}
-                  size={15}
-                  value={book.starRating}
-                  isHalf={true}
-                  edit={false}
-                />
-              </div>
-            </div>
-          ))}
-          {/* : booksByGenre.map((book) => (
-                <div css={productContainer} key={`book-${book.id}`}>
-                  <Link href={`/products/${book.id}`}>
-                    <a>
-                      <img
-                        css={imgStyles}
-                        src={`/${book.img}`}
-                        alt={book.titleShort}
-                      />{' '}
-                    </a>
-                  </Link>
-                  <button
-                    onClick={() => {
-                      setShoppingCart(addBookByBookId(book.id));
-                    }}
-                    css={buttonStyles}
-                  >
-                    +
-                  </button>
-                  <p>{book.titleShort}</p>
-                  <p> by {book.author}</p>
-                  <div css={starStyles}>
-                    <ReactStars
-                      count={5}
-                      size={15}
-                      value={book.starRating}
-                      isHalf={true}
-                      edit={false}
-                    />
-                  </div>
+          {props.products
+            .filter((book) => {
+              if (genreFilter === 'All genres') {
+                return true;
+              } else if (genreFilter === book.genre) {
+                return true;
+              } else {
+                return false;
+              }
+            })
+            .filter((book) => {
+              if (languageFilter === 'All languages') {
+                return true;
+              } else if (languageFilter === book.lang) {
+                return true;
+              } else {
+                return false;
+              }
+            })
+            .map((book) => (
+              <div css={productContainer} key={`book-${book.id}`}>
+                <Link href={`/products/${book.id}`}>
+                  <a>
+                    <img
+                      css={imgStyles}
+                      src={`/${book.img}`}
+                      alt={book.titleShort}
+                    />{' '}
+                  </a>
+                </Link>
+                <button
+                  onClick={() => {
+                    props.setShoppingCart(addBookByBookId(book.id));
+                  }}
+                  css={buttonStyles}
+                >
+                  +
+                </button>
+                <p css={titleStyles}>{book.titleShort}</p>
+                <p> by {book.author}</p>
+                <p css={priceStyles}>
+                  {' '}
+                  {book.currency} {book.usedPrice.toFixed(2)}
+                </p>
+                <div css={starStyles}>
+                  <ReactStars
+                    count={5}
+                    size={15}
+                    value={book.starRating}
+                    isHalf={true}
+                    edit={false}
+                  />
                 </div>
-              ))} */}
+              </div>
+            ))}
         </div>
       </div>
     </Layout>
@@ -203,9 +215,9 @@ export default function Products(props) {
 }
 
 export async function getServerSideProps() {
-  const { getProducts } = await import('../../util/database');
+  const { getAllProducts } = await import('../../util/database');
 
-  const products = await getProducts();
+  const products = await getAllProducts();
 
   return {
     props: {

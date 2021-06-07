@@ -4,6 +4,7 @@ import Link from 'next/link';
 const footerStyles = css`
   display: flex;
   justify-content: center;
+  align-items: center;
   line-height: 80%;
   padding: 0px 15px;
   background-color: darkgrey;
@@ -12,6 +13,7 @@ const footerStyles = css`
   position: fixed;
   bottom: 0;
   width: 100%;
+  height: 2.5rem;
   z-index: 998;
 
   > p {
