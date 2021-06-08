@@ -1,10 +1,10 @@
 import { css } from '@emotion/react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useState } from 'react';
 import Layout from '../components/Layout';
 import {
   addBookByBookId,
-  clearShoppingCart,
   removeBookFromShoppingCart,
   subtractBookByBookId,
 } from '../util/cookies';
@@ -127,11 +127,14 @@ const navButtonStyles = (variant = 'main') => css`
     background-color: white;
     color: #153243;
     border: 1px solid #153243;
-    width: 144px;
   `}
 `;
 
 export default function ShoppingCartPage(props) {
+  const [finalShoppingCartArray, setFinalShoppingCartArray] = useState(
+    props.finalShoppingCartArray,
+  );
+
   // retrieve book objects for books in shopping cart
   const bookIdsInShoppingCart = props.shoppingCart.map((item) => item.id);
 
@@ -153,6 +156,10 @@ export default function ShoppingCartPage(props) {
 
   const totalByBookOutput = JSON.parse(JSON.stringify(getTotalPriceByBook()));
 
+  function getTotalSum() {
+    finalShoppingCartArray.reduce();
+  }
+
   return (
     <Layout
       shoppingCart={props.shoppingCart}
@@ -162,12 +169,12 @@ export default function ShoppingCartPage(props) {
         <title>Shopping Cart</title>
       </Head>
       <div css={containerStyles}>
-        {props.shoppingCart.length !== 0 ? (
-          <>
+        {finalShoppingCartArray.length !== 0 ? (
+          <div>
             <p css={headingStyles}>
               You have{' '}
-              {props.shoppingCart
-                .map((item) => item.quantity)
+              {finalShoppingCartArray
+                .map((b) => b.quantity)
                 .reduce(
                   (accumulator, currentValue) => accumulator + currentValue,
                   0,
@@ -176,7 +183,7 @@ export default function ShoppingCartPage(props) {
               items in your shopping bag
             </p>
             <div css={shoppingBagContainer}>
-              {productsInShoppingCart.map((b) => (
+              {finalShoppingCartArray.map((b) => (
                 <div key={b.id} css={shoppingBagItemStyles}>
                   <div>
                     <Link href={`/products/${b.id}`}>
@@ -196,6 +203,15 @@ export default function ShoppingCartPage(props) {
                       <button
                         onClick={() => {
                           props.setShoppingCart(subtractBookByBookId(b.id));
+                          setFinalShoppingCartArray(
+                            finalShoppingCartArray.map((prod) => {
+                              if (prod.id === b.id) {
+                                return { ...prod, quantity: prod.quantity - 1 };
+                              } else {
+                                return prod;
+                              }
+                            }),
+                          );
                         }}
                         css={buttonStyles}
                       >
@@ -210,6 +226,15 @@ export default function ShoppingCartPage(props) {
                       <button
                         onClick={() => {
                           props.setShoppingCart(addBookByBookId(b.id));
+                          setFinalShoppingCartArray(
+                            finalShoppingCartArray.map((prod) => {
+                              if (prod.id === b.id) {
+                                return { ...prod, quantity: prod.quantity + 1 };
+                              } else {
+                                return prod;
+                              }
+                            }),
+                          );
                         }}
                         css={buttonStyles}
                       >
@@ -221,6 +246,11 @@ export default function ShoppingCartPage(props) {
                     <button
                       onClick={() => {
                         props.setShoppingCart(removeBookFromShoppingCart(b.id));
+                        setFinalShoppingCartArray(
+                          finalShoppingCartArray.filter(
+                            (prod) => prod.id !== b.id,
+                          ),
+                        );
                       }}
                       css={buttonStyles}
                     >
@@ -230,13 +260,7 @@ export default function ShoppingCartPage(props) {
                     </button>
                     <div key={b.id}>
                       {b.currency}{' '}
-                      {(
-                        Number(b.usedPrice) *
-                        Number(
-                          props.shoppingCart.find((item) => item.id === b.id)
-                            .quantity,
-                        )
-                      ).toFixed(2)}
+                      {(Number(b.usedPrice) * Number(b.quantity)).toFixed(2)}
                     </div>
                   </div>
                 </div>
@@ -245,7 +269,8 @@ export default function ShoppingCartPage(props) {
                 <div>Total:</div>
                 <div>
                   €{' '}
-                  {totalByBookOutput
+                  {finalShoppingCartArray
+                    .map((b) => b.usedPrice * b.quantity)
                     .reduce(
                       (accumulator, currentValue) => accumulator + currentValue,
                       0,
@@ -255,53 +280,67 @@ export default function ShoppingCartPage(props) {
               </div>
             </div>
             <div css={buttonContainer}>
-              <Link href="../../checkout">
+              <Link href="/checkout">
                 <a>
                   <button css={navButtonStyles()}>Proceed to checkout</button>
                 </a>
               </Link>
-              <Link href="../../products">
+              <Link href="/products">
                 <a>
                   <button css={navButtonStyles('secondary')}>
                     Continue shopping
                   </button>
                 </a>
               </Link>
-              <button
-                css={navButtonStyles('secondary')}
-                onClick={() => {
-                  props.setShoppingCart([]);
-                }}
-              >
-                Clear bag
-              </button>
             </div>
-          </>
+          </div>
         ) : (
-          <>
+          <div>
             <p css={headingStyles}>
               Oh snap... there's nothing in your bag yet :(
             </p>
-            <Link href="../../products">
+            <Link href="/products">
               <a>
                 <button css={navButtonStyles()}>Continue shopping</button>
               </a>
             </Link>
-          </>
+          </div>
         )}
       </div>
+      <div>{JSON.stringify(finalShoppingCartArray)}</div>
     </Layout>
   );
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context) {
   const { getAllProducts } = await import('../util/database');
+  console.log(context.req.cookies);
 
   const products = await getAllProducts();
+
+  const rawCookie = context.req.cookies.shoppingcart;
+
+  const cookieArray = rawCookie ? JSON.parse(rawCookie) : [];
+
+  const finalShoppingCartArray = cookieArray.map((item) => {
+    const draftShoppingCartObject = products.find(
+      (book) => book.id === item.id,
+    );
+    return {
+      id: draftShoppingCartObject.id,
+      titleShort: draftShoppingCartObject.titleShort,
+      author: draftShoppingCartObject.author,
+      img: draftShoppingCartObject.img,
+      usedPrice: draftShoppingCartObject.usedPrice,
+      currency: draftShoppingCartObject.currency,
+      quantity: item.quantity,
+    };
+  });
 
   return {
     props: {
       products,
+      finalShoppingCartArray,
     },
   };
 }
