@@ -1,6 +1,6 @@
 // ToDos:
-// 1) replace text links with icons
-// 2) add user authentication functionality (Clerk vs. self-built)
+// 1) replace text links with (react)-icons
+// 2) Stretch: add user authentication functionality (Clerk vs. self-built)
 
 import { css } from '@emotion/react';
 // import {
@@ -60,7 +60,6 @@ const headerStyles = css`
 // `;
 
 export default function Header(props) {
-  console.log(props.shoppingCart);
   return (
     <header css={headerStyles}>
       <Link href="/">

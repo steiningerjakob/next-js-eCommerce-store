@@ -13,7 +13,10 @@ export default function Success(props) {
       <Head>
         <title>Thank you!</title>
       </Head>
-      <h1>This is the thank you page</h1>
+      <p>
+        Thank you for your order! We will send you a confirmation email shortly.
+        We hope to see you again in our shop soon!
+      </p>
     </Layout>
   );
 }

@@ -92,7 +92,6 @@ export default function ProductDetails(props) {
     );
     return JSON.stringify(deliveryDate).split('T')[0].split('"')[1];
   }
-  console.log(props.shoppingCart);
   // Show message if product does not exist
   if (!props.singleProduct) {
     return (
@@ -108,26 +107,6 @@ export default function ProductDetails(props) {
     );
   }
 
-  // WORK-AROUND:
-  // if (!props.singleProduct) {
-  //   return (
-  //     <>
-  //       <Head>
-  //         <title>Product not found!</title>
-  //       </Head>
-  //       <div>Product not found</div>
-  //     </>
-  //   );
-  // } else if (!props.shoppingCart) {
-  //   return (
-  //     <>
-  //       <Head>
-  //         <title>Product not found!</title>
-  //       </Head>
-  //       <div>Product not found</div>
-  //     </>
-  //   );
-  // }
   return (
     <Layout
       shoppingCart={props.shoppingCart}
