@@ -1,8 +1,5 @@
 // ToDos:
-// 1) make modal appear automatically and not only on refresh
-// 2) keep an eye on shopping cart sums (sometimes weird..)
-// 3) refactor code to reduce duplication (props)
-// 4) Prio B: enable multiple checkbox filtering
+// 1) Prio B: enable multiple checkbox filtering
 
 import { css } from '@emotion/react';
 import Head from 'next/head';
@@ -104,80 +101,6 @@ const starStyles = css`
   left: 35%;
 `;
 
-const modalStyles = (props) => css`
-  visibility: ${props ? 'visible' : 'hidden'};
-  opacity: ${props ? '1' : '0'};
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: flex;
-  align-items: top;
-  justify-content: flex-end;
-  background: rgba(77, 77, 77, 0.7);
-  transition: all 0.3s;
-`;
-
-const modalContentStyles = css`
-  border-radius: 4px;
-  position: relative;
-  width: 500px;
-  max-width: 50vw;
-  max-height: 100%;
-  background: white;
-  padding: 16px 32px;
-`;
-
-const headingStyles = css`
-  font-size: 1.5em;
-  font-weight: 600;
-  margin-bottom: 24px;
-`;
-
-const shoppingBagItemStyles = css`
-  display: grid;
-  grid-template-columns: 1fr 3fr 1fr;
-  padding: 8px 0;
-  margin-bottom: 4px;
-  border-bottom: 1px solid #dcdcdc;
-`;
-
-const imageStyles = css`
-  max-width: 72px;
-`;
-
-const totalStyles = css`
-  display: flex;
-  justify-content: space-between;
-  font-weight: 600;
-  font-size: 1.5em;
-  margin-top: 16px;
-
-  div + div {
-    margin-right: 12px;
-  }
-`;
-
-const navButtonStyles = css`
-  font-weight: 600;
-  font-size: 1.1em;
-  background-color: #153243;
-  color: white;
-  text-align: center;
-  border-radius: 8px;
-  border: 1px solid #dcdcdc;
-  box-shadow: 1px 1px 8px 1px #dcdcdc;
-  margin: 24px 0;
-  width: 272px;
-  height: 72px;
-
-  :hover {
-    opacity: 0.8;
-    cursor: pointer;
-  }
-`;
-
 export default function Products(props) {
   // create list of unique genres from products array
   const uniqueGenres = [
@@ -190,30 +113,6 @@ export default function Products(props) {
   // // state variables
   const [genreFilter, setGenreFilter] = useState('All genres');
   const [languageFilter, setLanguageFilter] = useState('All languages');
-  const [modalIsActive, setModalIsActive] = useState(false);
-
-  // THE BELOW VARIABLES AND FUNCTIONS SHOULD BE DERIVED FROM
-  // PROPS IDEALLY
-
-  const bookIdsInShoppingCart = props.shoppingCart.map((item) => item.id);
-
-  const productsInShoppingCart = props.products.filter((product) =>
-    bookIdsInShoppingCart.includes(product.id),
-  );
-
-  // helper function to calculate subtotals by book, i.e.
-  // book price * book quantity in shopping cart
-  function getTotalPriceByBook() {
-    const p = productsInShoppingCart.map((book) => book.usedPrice);
-    const q = props.shoppingCart.map((item) => item.quantity);
-    const totalByBook = [];
-    for (let i = 0; i < Math.min(p.length, q.length); i++) {
-      totalByBook[i] = p[i] * q[i];
-    }
-    return totalByBook;
-  }
-
-  const totalByBookOutput = JSON.parse(JSON.stringify(getTotalPriceByBook()));
 
   return (
     <Layout
@@ -258,41 +157,37 @@ export default function Products(props) {
         </div>
         <div css={productListContainer}>
           {props.products
-            .filter((book) => {
+            .filter((b) => {
               if (genreFilter === 'All genres') {
                 return true;
-              } else if (genreFilter === book.genre) {
+              } else if (genreFilter === b.genre) {
                 return true;
               } else {
                 return false;
               }
             })
-            .filter((book) => {
+            .filter((b) => {
               if (languageFilter === 'All languages') {
                 return true;
-              } else if (languageFilter === book.lang) {
+              } else if (languageFilter === b.lang) {
                 return true;
               } else {
                 return false;
               }
             })
-            .map((book) => (
-              <div css={productContainer} key={`book-${book.id}`}>
-                <Link href={`/products/${book.id}`}>
+            .map((b) => (
+              <div css={productContainer} key={`book-${b.id}`}>
+                <Link href={`/products/${b.id}`}>
                   <a>
-                    <img
-                      css={imgStyles}
-                      src={`/${book.img}`}
-                      alt={book.titleShort}
-                    />{' '}
+                    <img css={imgStyles} src={`/${b.img}`} alt={b.titleShort} />{' '}
                   </a>
                 </Link>
                 <Link href="/products#modal">
                   <a>
                     <button
                       onClick={() => {
-                        props.setShoppingCart(addBookByBookId(book.id));
-                        setModalIsActive(true);
+                        props.setShoppingCart(addBookByBookId(b.id));
+                        alert('Product added to shopping bag!');
                       }}
                       css={buttonStyles}
                     >
@@ -300,86 +195,23 @@ export default function Products(props) {
                     </button>
                   </a>
                 </Link>
-                <p css={titleStyles}>{book.titleShort}</p>
-                <p> by {book.author}</p>
+                <p css={titleStyles}>{b.titleShort}</p>
+                <p> by {b.author}</p>
                 <p css={priceStyles}>
                   {' '}
-                  {book.currency} {book.usedPrice.toFixed(2)}
+                  {b.currency} {b.usedPrice.toFixed(2)}
                 </p>
                 <div css={starStyles}>
                   <ReactStars
                     count={5}
                     size={15}
-                    value={book.starRating}
+                    value={b.starRating}
                     isHalf={true}
                     edit={false}
                   />
                 </div>
               </div>
             ))}
-        </div>
-        <div id="modal" css={modalStyles(modalIsActive)}>
-          <div css={modalContentStyles}>
-            <div css={headingStyles}>
-              Added to shopping bag (
-              {props.shoppingCart
-                .map((item) => item.quantity)
-                .reduce(
-                  (accumulator, currentValue) => accumulator + currentValue,
-                  0,
-                )
-                .toFixed(0)}
-              )
-            </div>
-            <div>
-              {productsInShoppingCart.map((b) => (
-                <div key={b.id} css={shoppingBagItemStyles}>
-                  <div>
-                    <Link href={`/products/${b.id}`}>
-                      <a>
-                        <img
-                          src={`/${b.img}`}
-                          alt={b.titleShort}
-                          css={imageStyles}
-                        />
-                      </a>
-                    </Link>
-                  </div>
-                  <div>
-                    <div>{b.titleShort}</div>
-                    <div>by {b.author}</div>
-                  </div>
-                  <div>
-                    {b.currency}{' '}
-                    {(
-                      Number(b.usedPrice) *
-                      Number(
-                        props.shoppingCart.find((item) => item.id === b.id)
-                          .quantity,
-                      )
-                    ).toFixed(2)}
-                  </div>
-                </div>
-              ))}
-              <div css={totalStyles}>
-                <div>Total:</div>
-                <div>
-                  €{' '}
-                  {totalByBookOutput
-                    .reduce(
-                      (accumulator, currentValue) => accumulator + currentValue,
-                      0,
-                    )
-                    .toFixed(2)}
-                </div>
-              </div>
-              <Link href="../../shoppingcart">
-                <a>
-                  <button css={navButtonStyles}>Proceed to shopping bag</button>
-                </a>
-              </Link>
-            </div>
-          </div>
         </div>
       </div>
     </Layout>

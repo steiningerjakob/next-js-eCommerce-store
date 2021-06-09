@@ -131,34 +131,10 @@ const navButtonStyles = (variant = 'main') => css`
 `;
 
 export default function ShoppingCartPage(props) {
-  const [finalShoppingCartArray, setFinalShoppingCartArray] = useState(
-    props.finalShoppingCartArray,
+  // state variable to trigger re-render on cookie value change
+  const [productsInShoppingBag, setProductsInShoppingBag] = useState(
+    props.productsInShoppingBag,
   );
-
-  // retrieve book objects for books in shopping cart
-  const bookIdsInShoppingCart = props.shoppingCart.map((item) => item.id);
-
-  const productsInShoppingCart = props.products.filter((product) =>
-    bookIdsInShoppingCart.includes(product.id),
-  );
-
-  // helper function to calculate subtotals by book, i.e.
-  // book price * book quantity in shopping cart
-  function getTotalPriceByBook() {
-    const p = productsInShoppingCart.map((book) => book.usedPrice);
-    const q = props.shoppingCart.map((item) => item.quantity);
-    const totalByBook = [];
-    for (let i = 0; i < Math.min(p.length, q.length); i++) {
-      totalByBook[i] = p[i] * q[i];
-    }
-    return totalByBook;
-  }
-
-  const totalByBookOutput = JSON.parse(JSON.stringify(getTotalPriceByBook()));
-
-  function getTotalSum() {
-    finalShoppingCartArray.reduce();
-  }
 
   return (
     <Layout
@@ -169,11 +145,11 @@ export default function ShoppingCartPage(props) {
         <title>Shopping Cart</title>
       </Head>
       <div css={containerStyles}>
-        {finalShoppingCartArray.length !== 0 ? (
+        {productsInShoppingBag.length !== 0 ? (
           <div>
             <p css={headingStyles}>
               You have{' '}
-              {finalShoppingCartArray
+              {productsInShoppingBag
                 .map((b) => b.quantity)
                 .reduce(
                   (accumulator, currentValue) => accumulator + currentValue,
@@ -183,7 +159,7 @@ export default function ShoppingCartPage(props) {
               items in your shopping bag
             </p>
             <div css={shoppingBagContainer}>
-              {finalShoppingCartArray.map((b) => (
+              {productsInShoppingBag.map((b) => (
                 <div key={b.id} css={shoppingBagItemStyles}>
                   <div>
                     <Link href={`/products/${b.id}`}>
@@ -199,19 +175,40 @@ export default function ShoppingCartPage(props) {
                   <div>
                     <div>{b.titleShort}</div>
                     <div>by {b.author}</div>
-                    <div key={b.id} css={counterStyles}>
+                    <div css={counterStyles}>
                       <button
                         onClick={() => {
-                          props.setShoppingCart(subtractBookByBookId(b.id));
-                          setFinalShoppingCartArray(
-                            finalShoppingCartArray.map((prod) => {
-                              if (prod.id === b.id) {
-                                return { ...prod, quantity: prod.quantity - 1 };
-                              } else {
-                                return prod;
-                              }
-                            }),
-                          );
+                          if (b.quantity === 1) {
+                            if (
+                              window.confirm(
+                                'Are you sure you want to delete this item from the shopping bag?',
+                              )
+                            ) {
+                              props.setShoppingCart(
+                                removeBookFromShoppingCart(b.id),
+                              );
+                              setProductsInShoppingBag(
+                                productsInShoppingBag.filter(
+                                  (item) => item.id !== b.id,
+                                ),
+                              );
+                            } else {
+                            }
+                          } else {
+                            props.setShoppingCart(subtractBookByBookId(b.id));
+                            setProductsInShoppingBag(
+                              productsInShoppingBag.map((prod) => {
+                                if (prod.id === b.id) {
+                                  return {
+                                    ...prod,
+                                    quantity: prod.quantity - 1,
+                                  };
+                                } else {
+                                  return prod;
+                                }
+                              }),
+                            );
+                          }
                         }}
                         css={buttonStyles}
                       >
@@ -226,12 +223,12 @@ export default function ShoppingCartPage(props) {
                       <button
                         onClick={() => {
                           props.setShoppingCart(addBookByBookId(b.id));
-                          setFinalShoppingCartArray(
-                            finalShoppingCartArray.map((prod) => {
-                              if (prod.id === b.id) {
-                                return { ...prod, quantity: prod.quantity + 1 };
+                          setProductsInShoppingBag(
+                            productsInShoppingBag.map((item) => {
+                              if (item.id === b.id) {
+                                return { ...item, quantity: item.quantity + 1 };
                               } else {
-                                return prod;
+                                return item;
                               }
                             }),
                           );
@@ -246,9 +243,9 @@ export default function ShoppingCartPage(props) {
                     <button
                       onClick={() => {
                         props.setShoppingCart(removeBookFromShoppingCart(b.id));
-                        setFinalShoppingCartArray(
-                          finalShoppingCartArray.filter(
-                            (prod) => prod.id !== b.id,
+                        setProductsInShoppingBag(
+                          productsInShoppingBag.filter(
+                            (item) => item.id !== b.id,
                           ),
                         );
                       }}
@@ -258,9 +255,8 @@ export default function ShoppingCartPage(props) {
                         🗑️
                       </span>
                     </button>
-                    <div key={b.id}>
-                      {b.currency}{' '}
-                      {(Number(b.usedPrice) * Number(b.quantity)).toFixed(2)}
+                    <div>
+                      {b.currency} {(b.usedPrice * b.quantity).toFixed(2)}
                     </div>
                   </div>
                 </div>
@@ -269,7 +265,7 @@ export default function ShoppingCartPage(props) {
                 <div>Total:</div>
                 <div>
                   €{' '}
-                  {finalShoppingCartArray
+                  {productsInShoppingBag
                     .map((b) => b.usedPrice * b.quantity)
                     .reduce(
                       (accumulator, currentValue) => accumulator + currentValue,
@@ -307,40 +303,39 @@ export default function ShoppingCartPage(props) {
           </div>
         )}
       </div>
-      <div>{JSON.stringify(finalShoppingCartArray)}</div>
     </Layout>
   );
 }
 
 export async function getServerSideProps(context) {
   const { getAllProducts } = await import('../util/database');
-  console.log(context.req.cookies);
 
   const products = await getAllProducts();
 
   const rawCookie = context.req.cookies.shoppingcart;
 
+  // check if raw cookie is undefined
   const cookieArray = rawCookie ? JSON.parse(rawCookie) : [];
 
-  const finalShoppingCartArray = cookieArray.map((item) => {
-    const draftShoppingCartObject = products.find(
-      (book) => book.id === item.id,
-    );
+  // combine arrays "shoppingcart" (as defined by cookie)
+  // and "products" (as defined in database) to create one array
+  // with desired info on products in cart (incl. quantity)
+  const productsInShoppingBag = cookieArray.map((item) => {
+    const draftShoppingBagObject = products.find((book) => book.id === item.id);
     return {
-      id: draftShoppingCartObject.id,
-      titleShort: draftShoppingCartObject.titleShort,
-      author: draftShoppingCartObject.author,
-      img: draftShoppingCartObject.img,
-      usedPrice: draftShoppingCartObject.usedPrice,
-      currency: draftShoppingCartObject.currency,
+      id: draftShoppingBagObject.id,
+      titleShort: draftShoppingBagObject.titleShort,
+      author: draftShoppingBagObject.author,
+      img: draftShoppingBagObject.img,
+      usedPrice: draftShoppingBagObject.usedPrice,
+      currency: draftShoppingBagObject.currency,
       quantity: item.quantity,
     };
   });
 
   return {
     props: {
-      products,
-      finalShoppingCartArray,
+      productsInShoppingBag,
     },
   };
 }

@@ -60,14 +60,15 @@ const headerStyles = css`
 // `;
 
 export default function Header(props) {
+  console.log(props.shoppingCart);
   return (
     <header css={headerStyles}>
       <Link href="/">
-        <a>Home</a>
+        <a data-cy="header-home-link">Home</a>
       </Link>
       <div>
         <Link href="/products">
-          <a>All Books</a>
+          <a data-cy="header-all-products-link">All Books</a>
         </Link>
       </div>
       {/* <div>
@@ -81,13 +82,13 @@ export default function Header(props) {
       <div>
         <div>
           <Link href="/login">
-            <a>User Login</a>
+            <a data-cy="header-user-login-link">User Login</a>
           </Link>
         </div>
 
         <div>
           <Link href="/shoppingcart">
-            <a>
+            <a data-cy="header-shopping-cart-link">
               Shopping Bag (
               {props.shoppingCart
                 .map((item) => item.quantity)
