@@ -7,8 +7,8 @@ function MyApp({ Component, pageProps }) {
   // declare globally accessible state variable
   const [shoppingCart, setShoppingCart] = useState([]);
 
-  // update state variable on page reload to sync up server with
-  // front-end
+  // update state variable on page reload to sync up server
+  // with front-end
   useEffect(() => {
     setShoppingCart(getShoppingCartCookieValue());
   }, []);

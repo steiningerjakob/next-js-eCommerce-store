@@ -110,7 +110,7 @@ export default function Products(props) {
     ...new Set(props.products.map((book) => book.lang)),
   ].concat(...['All languages']);
 
-  // // state variables
+  // // state variables for filters
   const [genreFilter, setGenreFilter] = useState('All genres');
   const [languageFilter, setLanguageFilter] = useState('All languages');
 
@@ -178,23 +178,20 @@ export default function Products(props) {
             .map((b) => (
               <div css={productContainer} key={`book-${b.id}`}>
                 <Link href={`/products/${b.id}`}>
-                  <a>
+                  <a data-cy="product-list-single-product-link">
                     <img css={imgStyles} src={`/${b.img}`} alt={b.titleShort} />{' '}
                   </a>
                 </Link>
-                <Link href="/products#modal">
-                  <a>
-                    <button
-                      onClick={() => {
-                        props.setShoppingCart(addBookByBookId(b.id));
-                        alert('Product added to shopping bag!');
-                      }}
-                      css={buttonStyles}
-                    >
-                      +
-                    </button>
-                  </a>
-                </Link>
+                <button
+                  onClick={() => {
+                    props.setShoppingCart(addBookByBookId(b.id));
+                    alert('Product added to shopping bag!');
+                  }}
+                  css={buttonStyles}
+                >
+                  +
+                </button>
+
                 <p css={titleStyles}>{b.titleShort}</p>
                 <p> by {b.author}</p>
                 <p css={priceStyles}>

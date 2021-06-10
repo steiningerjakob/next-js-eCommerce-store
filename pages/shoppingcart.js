@@ -2,6 +2,8 @@ import { css } from '@emotion/react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useState } from 'react';
+import { IconContext } from 'react-icons';
+import { FaTrash } from 'react-icons/fa';
 import Layout from '../components/Layout';
 import {
   addBookByBookId,
@@ -92,6 +94,7 @@ const buttonStyles = css`
   border: 1px solid #dcdcdc;
   width: 32px;
   height: 24px;
+  padding-top: 2px;
 
   :hover {
     cursor: pointer;
@@ -177,6 +180,7 @@ export default function ShoppingCartPage(props) {
                     <div>by {b.author}</div>
                     <div css={counterStyles}>
                       <button
+                        data-cy="shopping-cart-item-quantity-subtract"
                         onClick={() => {
                           if (b.quantity === 1) {
                             if (
@@ -214,13 +218,14 @@ export default function ShoppingCartPage(props) {
                       >
                         -
                       </button>
-                      <div>
+                      <div data-cy="shopping-cart-item-quantity-counter">
                         {
                           props.shoppingCart.find((item) => item.id === b.id)
                             ?.quantity
                         }
                       </div>
                       <button
+                        data-cy="shopping-cart-item-quantity-add"
                         onClick={() => {
                           props.setShoppingCart(addBookByBookId(b.id));
                           setProductsInShoppingBag(
@@ -241,6 +246,7 @@ export default function ShoppingCartPage(props) {
                   </div>
                   <div css={rightItemColumnStyles}>
                     <button
+                      data-cy="shopping-cart-item-quantity-remove"
                       onClick={() => {
                         props.setShoppingCart(removeBookFromShoppingCart(b.id));
                         setProductsInShoppingBag(
@@ -251,9 +257,13 @@ export default function ShoppingCartPage(props) {
                       }}
                       css={buttonStyles}
                     >
-                      <span role="img" aria-label="trash bin">
-                        🗑️
-                      </span>
+                      <IconContext.Provider
+                        value={{ color: 'grey', title: 'trash icon' }}
+                      >
+                        <div>
+                          <FaTrash />
+                        </div>
+                      </IconContext.Provider>
                     </button>
                     <div>
                       {b.currency} {(b.usedPrice * b.quantity).toFixed(2)}
@@ -277,7 +287,7 @@ export default function ShoppingCartPage(props) {
             </div>
             <div css={buttonContainer}>
               <Link href="/checkout">
-                <a>
+                <a data-cy="shopping-cart-checkout-link">
                   <button css={navButtonStyles()}>Proceed to checkout</button>
                 </a>
               </Link>

@@ -3,13 +3,9 @@
 // 2) Stretch: add user authentication functionality (Clerk vs. self-built)
 
 import { css } from '@emotion/react';
-// import {
-//   faSearch,
-//   faShoppingBag,
-//   faUserCircle,
-// } from '@fortawesome/free-solid-svg-icons';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
+import { IconContext } from 'react-icons';
+import { FaShoppingBag, FaUserCircle } from 'react-icons/fa';
 
 const headerStyles = css`
   display: flex;
@@ -32,8 +28,9 @@ const headerStyles = css`
     display: flex;
     align-items: center;
     text-decoration: none;
+    font-size: 1.1rem;
     color: lightgrey;
-    margin-right: 32px;
+    margin-right: 48px;
     :hover {
       color: white;
     }
@@ -81,14 +78,29 @@ export default function Header(props) {
       <div>
         <div>
           <Link href="/login">
-            <a data-cy="header-user-login-link">User Login</a>
+            <a data-cy="header-user-login-link">
+              <IconContext.Provider
+                value={{ size: '2em', title: 'user login icon' }}
+              >
+                <div>
+                  <FaUserCircle />
+                </div>
+              </IconContext.Provider>
+            </a>
           </Link>
         </div>
 
         <div>
           <Link href="/shoppingcart">
             <a data-cy="header-shopping-cart-link">
-              Shopping Bag (
+              <IconContext.Provider
+                value={{ size: '2em', titl: 'shopping bag icon' }}
+              >
+                <div>
+                  <FaShoppingBag />
+                </div>
+              </IconContext.Provider>
+              (
               {props.shoppingCart
                 .map((item) => item.quantity)
                 .reduce(

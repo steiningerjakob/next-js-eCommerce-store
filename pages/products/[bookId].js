@@ -1,7 +1,6 @@
 import { css } from '@emotion/react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useState } from 'react';
 import ReactStars from 'react-rating-stars-component';
 import Layout from '../../components/Layout';
 import { addBookByBookId, parseCookieValue } from '../../util/cookies';
@@ -80,8 +79,6 @@ const buttonStyles = css`
 `;
 
 export default function ProductDetails(props) {
-  const [buttonIsClicked, setButtonIsClicked] = useState(false);
-
   // function to display a delivery date (1 week from current date)
   function getDeliveryDate() {
     const today = new Date();
@@ -174,25 +171,20 @@ export default function ProductDetails(props) {
             {parseFloat(props.singleProduct.newPrice).toFixed(2)})
           </p>
           <p>Expected delivery date: {getDeliveryDate()}</p>
-          <button
-            onClick={() => {
-              props.setShoppingCart(addBookByBookId(props.singleProduct.id));
-              setButtonIsClicked(true);
-            }}
-            css={buttonStyles}
-          >
-            Add to shopping bag
-          </button>
-          {/* conditional rendering upon button click */}
-          {buttonIsClicked === true ? (
-            <Link href="../../shoppingcart">
-              <a>
-                <button css={buttonStyles}>Proceed to shopping bag</button>
-              </a>
-            </Link>
-          ) : (
-            ''
-          )}
+          <Link href="../../shoppingcart">
+            <a data-cy="single-product-shopping-cart-link">
+              <button
+                onClick={() => {
+                  props.setShoppingCart(
+                    addBookByBookId(props.singleProduct.id),
+                  );
+                }}
+                css={buttonStyles}
+              >
+                Add to shopping bag
+              </button>
+            </a>
+          </Link>
         </section>
       </div>
     </Layout>

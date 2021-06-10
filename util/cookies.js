@@ -56,10 +56,8 @@ export function removeBookFromShoppingCart(bookId) {
   return newCookieValue;
 }
 
-// potentially buggy since it leads to faulty shopping cart sums
 export function clearShoppingCart() {
-  const newCookieValue = [...getShoppingCartCookieValue()];
-  newCookieValue.length = 0;
+  const newCookieValue = [];
   cookies.set('shoppingcart', newCookieValue);
   return newCookieValue;
 }

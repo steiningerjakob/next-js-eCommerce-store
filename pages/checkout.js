@@ -10,6 +10,7 @@ import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Layout from '../components/Layout';
+import { clearShoppingCart } from '../util/cookies';
 
 const containerStyles = css`
   padding: 8px 24px;
@@ -28,7 +29,7 @@ const headingStyles = css`
 const formContainer = css`
   margin-top: 24px;
   width: 54%;
-  background-color: white;
+  background-color: #f5f5f5;
   box-shadow: 1px 1px 8px 1px #dcdcdc;
   border-radius: 4px;
   padding: 16px;
@@ -208,7 +209,7 @@ export default function Checkout(props) {
           <Form>
             <p css={headingStyles}>Customer information</p>
             <section css={formSectionStyles}>
-              <Form.Group css={formGroupStyles}>
+              <Form.Group css={formGroupStyles} data-cy="form-group">
                 <Form.Label css={labelStyles}>First name</Form.Label>
                 <Form.Control
                   type="text"
@@ -216,6 +217,7 @@ export default function Checkout(props) {
                   onChange={(e) => setField('firstName', e.target.value)}
                   placeholder="Jane"
                   isInvalid={!!errors.firstName}
+                  data-cy="checkout-form-firstName"
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.firstName}
@@ -229,6 +231,7 @@ export default function Checkout(props) {
                   onChange={(e) => setField('lastName', e.target.value)}
                   placeholder="Doe"
                   isInvalid={!!errors.lastName}
+                  data-cy="checkout-form-lastName"
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.lastName}
@@ -242,6 +245,7 @@ export default function Checkout(props) {
                   onChange={(e) => setField('emailAddress', e.target.value)}
                   placeholder="jane@doe.com"
                   isInvalid={!!errors.emailAddress}
+                  data-cy="checkout-form-emailAddress"
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.emailAddress}
@@ -255,6 +259,7 @@ export default function Checkout(props) {
                   onChange={(e) => setField('phoneNumber', e.target.value)}
                   placeholder="0676/1234567"
                   isInvalid={!!errors.phoneNumber}
+                  data-cy="checkout-form-phoneNumber"
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.phoneNumber}
@@ -271,6 +276,7 @@ export default function Checkout(props) {
                   onChange={(e) => setField('address', e.target.value)}
                   placeholder="Sappho Street 1"
                   isInvalid={!!errors.address}
+                  data-cy="checkout-form-address"
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.address}
@@ -284,6 +290,7 @@ export default function Checkout(props) {
                   onChange={(e) => setField('postalCode', e.target.value)}
                   placeholder="1090"
                   isInvalid={!!errors.postalCode}
+                  data-cy="checkout-form-postalCode"
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.postalCode}
@@ -297,6 +304,7 @@ export default function Checkout(props) {
                   onChange={(e) => setField('city', e.target.value)}
                   placeholder="Vienna"
                   isInvalid={!!errors.city}
+                  data-cy="checkout-form-city"
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.city}
@@ -310,6 +318,7 @@ export default function Checkout(props) {
                   onChange={(e) => setField('country', e.target.value)}
                   placeholder="Austria"
                   isInvalid={!!errors.country}
+                  data-cy="checkout-form-country"
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.country}
@@ -326,6 +335,7 @@ export default function Checkout(props) {
                   onChange={(e) => setField('creditCardNumber', e.target.value)}
                   placeholder="1111 2222 3333 4444"
                   isInvalid={!!errors.creditCardNumber}
+                  data-cy="checkout-form-creditCardNumber"
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.creditCardNumber}
@@ -339,6 +349,7 @@ export default function Checkout(props) {
                   onChange={(e) => setField('expiration', e.target.value)}
                   placeholder="MM/YY"
                   isInvalid={!!errors.expiration}
+                  data-cy="checkout-form-expiration"
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.expiration}
@@ -352,6 +363,7 @@ export default function Checkout(props) {
                   onChange={(e) => setField('nameOnCard', e.target.value)}
                   placeholder="Jane Doe"
                   isInvalid={!!errors.nameOnCard}
+                  data-cy="checkout-form-nameOnCard"
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.nameOnCard}
@@ -365,22 +377,33 @@ export default function Checkout(props) {
                   onChange={(e) => setField('cvv', e.target.value)}
                   placeholder="123"
                   isInvalid={!!errors.cvv}
+                  data-cy="checkout-form-cvv"
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.cvv}
                 </Form.Control.Feedback>
               </Form.Group>
             </section>
-            <Button type="submit" onClick={handleSubmit}>
+            <Button
+              type="submit"
+              onClick={handleSubmit}
+              variant="secondary"
+              data-cy="checkout-form-submit-button"
+            >
               Submit information
             </Button>
           </Form>
         </div>
-        <div>
+        <div data-cy="checkout-place-order-element">
           {formIsValidated === true ? (
             <Link href="/success">
-              <a>
-                <button css={checkoutButtonStyles()}>Place your order</button>
+              <a data-cy="checkout-place-order-link">
+                <button
+                  css={checkoutButtonStyles()}
+                  onClick={clearShoppingCart()}
+                >
+                  Place your order
+                </button>
               </a>
             </Link>
           ) : (
