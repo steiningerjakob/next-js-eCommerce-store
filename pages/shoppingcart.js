@@ -10,6 +10,10 @@ import {
   removeBookFromShoppingCart,
   subtractBookByBookId,
 } from '../util/cookies';
+import {
+  getShoppingCartQuantity,
+  getShoppingCartSum,
+} from '../util/shoppingCartFunctions';
 
 const containerStyles = css`
   padding: 8px 24px;
@@ -151,15 +155,8 @@ export default function ShoppingCartPage(props) {
         {productsInShoppingBag.length !== 0 ? (
           <div>
             <p css={headingStyles}>
-              You have{' '}
-              {productsInShoppingBag
-                .map((b) => b.quantity)
-                .reduce(
-                  (accumulator, currentValue) => accumulator + currentValue,
-                  0,
-                )
-                .toFixed(0)}{' '}
-              items in your shopping bag
+              You have {getShoppingCartQuantity(productsInShoppingBag)} items in
+              your shopping bag
             </p>
             <div css={shoppingBagContainer}>
               {productsInShoppingBag.map((b) => (
@@ -273,16 +270,7 @@ export default function ShoppingCartPage(props) {
               ))}
               <div css={totalStyles}>
                 <div>Total:</div>
-                <div>
-                  €{' '}
-                  {productsInShoppingBag
-                    .map((b) => b.usedPrice * b.quantity)
-                    .reduce(
-                      (accumulator, currentValue) => accumulator + currentValue,
-                      0,
-                    )
-                    .toFixed(2)}
-                </div>
+                <div>€ {getShoppingCartSum(productsInShoppingBag)}</div>
               </div>
             </div>
             <div css={buttonContainer}>
