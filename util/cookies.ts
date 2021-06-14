@@ -1,11 +1,16 @@
 import cookies from 'js-cookie';
 
-export function getShoppingCartCookieValue() {
+export type ShoppingCart = {
+  id: number;
+  quantity: number;
+}[];
+
+export function getShoppingCartCookieValue(): ShoppingCart {
   const cookieValue = cookies.getJSON('shoppingcart');
   return Array.isArray(cookieValue) ? cookieValue : [];
 }
 
-export function addBookByBookId(bookId) {
+export function addBookByBookId(bookId: number) {
   const newCookieValue = [...getShoppingCartCookieValue()];
   const bookBookIdInCookie = newCookieValue.find((b) => b.id === bookId);
 
@@ -21,7 +26,7 @@ export function addBookByBookId(bookId) {
   return newCookieValue;
 }
 
-export function subtractBookByBookId(bookId) {
+export function subtractBookByBookId(bookId: number) {
   const minValue = 0;
   const newCookieValue = [...getShoppingCartCookieValue()];
   const bookBookIdInCookie = newCookieValue.find((b) => b.id === bookId);
@@ -42,7 +47,7 @@ export function subtractBookByBookId(bookId) {
   return newCookieValue;
 }
 
-export function removeBookFromShoppingCart(bookId) {
+export function removeBookFromShoppingCart(bookId: number) {
   const newCookieValue = [...getShoppingCartCookieValue()];
   const bookBookIdInCookie = newCookieValue.find((b) => b.id === bookId);
   const removeId = newCookieValue.findIndex((b) => b.id === bookId);
@@ -57,12 +62,12 @@ export function removeBookFromShoppingCart(bookId) {
 }
 
 export function clearShoppingCart() {
-  const newCookieValue = [];
+  const newCookieValue: ShoppingCart = [];
   cookies.set('shoppingcart', newCookieValue);
   return newCookieValue;
 }
 
-export function parseCookieValue(value, defaultValue) {
+export function parseCookieValue(value: string, defaultValue: any) {
   try {
     return JSON.parse(value);
   } catch (err) {

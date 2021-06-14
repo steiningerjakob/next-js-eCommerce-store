@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { getShoppingCartCookieValue } from '../util/cookies';
 
-function MyApp({ Component, pageProps }) {
+export default function MyApp({ Component, pageProps }) {
   // declare globally accessible state variable
   const [shoppingCart, setShoppingCart] = useState([]);
 
@@ -43,5 +43,3 @@ function MyApp({ Component, pageProps }) {
     </>
   );
 }
-
-export default MyApp;

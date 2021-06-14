@@ -75,3 +75,32 @@ export async function getProductByLanguage(id) {
   `;
   return products.map((product) => camelcaseKeys(product));
 }
+
+// adapted from:
+// https://www.emgoto.com/react-search-bar/
+
+export async function searchFunction(query) {
+  const products = await sql`
+    SELECT
+      *
+    FROM
+      products`;
+  if (!query) {
+    return products.map((product) => camelcaseKeys(product));
+  } else {
+    return (
+      products
+        // filter book descriptions that include query
+        .filter((b) => {
+          const productDescription = b.descript.toLowerCase();
+          return productDescription.includes(query);
+        })
+        .map((product) => camelcaseKeys(product))
+    );
+  }
+}
+// This will transform ALL array elements to lower case,
+// but for some reason not working for search
+// const allArrayElementsToLowerCase = products.map((b) =>
+//     String.prototype.toLowerCase.apply(JSON.stringify(b)),
+//   );

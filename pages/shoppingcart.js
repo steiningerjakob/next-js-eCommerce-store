@@ -274,16 +274,16 @@ export default function ShoppingCartPage(props) {
               </div>
             </div>
             <div css={buttonContainer}>
-              <Link href="/checkout">
-                <a data-cy="shopping-cart-checkout-link">
-                  <button css={navButtonStyles()}>Proceed to checkout</button>
-                </a>
-              </Link>
               <Link href="/products">
                 <a>
                   <button css={navButtonStyles('secondary')}>
                     Continue shopping
                   </button>
+                </a>
+              </Link>
+              <Link href="/checkout">
+                <a data-cy="shopping-cart-checkout-link">
+                  <button css={navButtonStyles()}>Proceed to checkout</button>
                 </a>
               </Link>
             </div>

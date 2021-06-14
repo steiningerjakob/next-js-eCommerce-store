@@ -1,9 +1,11 @@
 import { css } from '@emotion/react';
+import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { Dispatch, SetStateAction, useState } from 'react';
 import ReactStars from 'react-rating-stars-component';
 import Layout from '../../components/Layout';
-import { addBookByBookId, parseCookieValue } from '../../util/cookies';
+import { addBookByBookId, ShoppingCart } from '../../util/cookies';
 
 const gridStyles = css`
   display: grid;
@@ -52,16 +54,28 @@ const priceStyles = css`
   margin-top: 16px;
 `;
 
-const buttonStyles = css`
+const readMoreStyles = css`
+  color: #284b63;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border: none;
+
+  :hover {
+    text-decoration: underline;
+  }
+`;
+
+const navButtonStyles = (variant = 'main') => css`
   font-weight: 600;
   font-size: 1.1em;
   background-color: #153243;
   color: white;
   text-align: center;
   border-radius: 8px;
-  border: none;
+  border: 1px solid #dcdcdc;
+  box-shadow: 1px 1px 8px 1px #dcdcdc;
   margin: 24px 0;
-  width: 304px;
+  width: 272px;
   height: 72px;
 
   :hover {
@@ -69,16 +83,49 @@ const buttonStyles = css`
     cursor: pointer;
   }
 
-  :focus {
-    background-color: #81b29a;
-    :hover {
-      opacity: 1;
-      cursor: default;
-    }
-  }
+  ${variant === 'secondary' &&
+  css`
+    background-color: white;
+    color: #153243;
+    border: 1px solid #153243;
+  `}
 `;
 
-export default function ProductDetails(props) {
+type Product = {
+  author: string;
+  currency: string;
+  descript: string;
+  genre: string;
+  id: number;
+  img: string;
+  isbn: string;
+  lang: string;
+  newPrice: number;
+  pages: number;
+  publicationDate: string;
+  publisher: string;
+  reviews: number;
+  starRating: number;
+  titleLong: string;
+  titleShort: string;
+  usedPrice: number;
+};
+
+type Props = {
+  shoppingCart: ShoppingCart;
+  singleProduct: Product;
+  setShoppingCart: Dispatch<SetStateAction<ShoppingCart>>;
+};
+
+export default function ProductDetails(props: Props) {
+  console.log(props.shoppingCart[0].quantity);
+  // state variable and event handler for "read more" component
+  // see also: https://www.geeksforgeeks.org/how-to-create-a-read-more-component-in-reactjs/
+  const [readMoreIsActive, setReadMoreIsActive] = useState(true);
+  function toggleReadMore() {
+    setReadMoreIsActive(!readMoreIsActive);
+  }
+
   // function to display a delivery date (1 week from current date)
   function getDeliveryDate() {
     const today = new Date();
@@ -128,7 +175,7 @@ export default function ProductDetails(props) {
               <ReactStars
                 count={5}
                 size={24}
-                value={parseFloat(props.singleProduct.starRating)}
+                value={props.singleProduct.starRating}
                 isHalf={true}
                 edit={false}
               />
@@ -157,18 +204,23 @@ export default function ProductDetails(props) {
           </p>
           <p>
             <span css={boldStyles}>Description: </span>
-            {props.singleProduct.descript}
+            {readMoreIsActive
+              ? props.singleProduct.descript.slice(0, 360)
+              : props.singleProduct.descript}
+            <button onClick={toggleReadMore} css={readMoreStyles}>
+              {readMoreIsActive ? '...read more' : ' show less'}
+            </button>
           </p>
         </section>
         <section>
           <p css={headingStyles}>Buy used from us:</p>
           <p css={priceStyles}>
             {props.singleProduct.currency}{' '}
-            {parseFloat(props.singleProduct.usedPrice).toFixed(2)}
+            {props.singleProduct.usedPrice.toFixed(2)}
           </p>
           <p css={amazonStyles}>
             (Amazon's price: {props.singleProduct.currency}{' '}
-            {parseFloat(props.singleProduct.newPrice).toFixed(2)})
+            {props.singleProduct.newPrice.toFixed(2)})
           </p>
           <p>Expected delivery date: {getDeliveryDate()}</p>
           <Link href="../../shoppingcart">
@@ -179,9 +231,16 @@ export default function ProductDetails(props) {
                     addBookByBookId(props.singleProduct.id),
                   );
                 }}
-                css={buttonStyles}
+                css={navButtonStyles()}
               >
                 Add to shopping bag
+              </button>
+            </a>
+          </Link>
+          <Link href="/products">
+            <a>
+              <button css={navButtonStyles('secondary')}>
+                Continue shopping
               </button>
             </a>
           </Link>
@@ -191,7 +250,7 @@ export default function ProductDetails(props) {
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { getProductById } = await import('../../util/database');
   const bookId = context.query.bookId;
 
@@ -200,7 +259,6 @@ export async function getServerSideProps(context) {
   return {
     props: {
       singleProduct: singleProduct || null,
-      quantity: parseCookieValue(context.req.cookies.quantity, []),
     },
   };
 }

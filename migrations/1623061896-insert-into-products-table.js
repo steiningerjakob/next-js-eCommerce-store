@@ -11,7 +11,7 @@ const products = [
     isbn: '9780261102385',
     star_rating: 4.7,
     reviews: 9692,
-    img: 'the lord of the rings.jpg',
+    img: 'the_lord_of_the_rings.jpg',
     used_price: 7.74,
     currency: 'EUR',
     new_price: 23.22,
@@ -111,7 +111,7 @@ const products = [
     title_short: 'Harry Potter und der Orden des Phönix',
     title_long: 'Harry Potter und der Orden des Phönix (Band 5)',
     author: 'Joanne K. Rowling',
-    genre: 'Fantasy',
+    genre: 'Young Adult',
     pages: 1024,
     publisher: 'Carlsen',
     publication_date: '11/15/2003',
@@ -215,6 +215,218 @@ const products = [
 
 		The Name of the Wind is fantasy at its very best, and an astounding must-read title.`,
   },
+  {
+    title_short: 'A Storm of Swords',
+    title_long:
+      'A Song of Ice and Fire 3. A Storm of Swords.: A Song of Ice and Fire: Book Three',
+    author: 'George R.R. Martin',
+    genre: 'Fantasy',
+    pages: 1216,
+    publisher: 'Bantam',
+    publication_date: '3/4/2004',
+    lang: 'English',
+    isbn: '978-0553573428',
+    star_rating: 4.8,
+    reviews: 7496,
+    img: 'a storm of swords.jpg',
+    used_price: 2.61,
+    currency: 'EUR',
+    new_price: 7.83,
+    descript:
+      'Here is the third volume in George R. R. Martin’s magnificent cycle of novels that includes A Game of Thrones and A Clash of Kings. As a whole, this series comprises a genuine masterpiece of modern fantasy, bringing together the best the genre has to offer. Magic, mystery, intrigue, romance, and adventure fill these pages and transport us to a world unlike any we have ever experienced. Already hailed as a classic, George R. R. Martin’s stunning series is destined to stand as one of the great achievements of imaginative fiction.\r\n\r\nA STORM OF SWORDS\r\n\r\nOf the five contenders for power, one is dead, another in disfavor, and still the wars rage as violently as ever, as alliances are made and broken. Joffrey, of House Lannister, sits on the Iron Throne, the uneasy ruler of the land of the Seven Kingdoms. His most bitter rival, Lord Stannis, stands defeated and disgraced, the victim of the jealous sorceress who holds him in her evil thrall. But young Robb, of House Stark, still rules the North from the fortress of Riverrun. Robb plots against his despised Lannister enemies, even as they hold his sister hostage at King’s Landing, the seat of the Iron Throne. Meanwhile, making her way across a blood-drenched continent is the exiled queen, Daenerys, mistress of the only three dragons still left in the world. . . .\r\n\r\nBut as opposing forces maneuver for the final titanic showdown, an army of barbaric wildlings arrives from the outermost line of civilization. In their vanguard is a horde of mythical Others--a supernatural army of the living dead whose animated corpses are unstoppable. As the future of the land hangs in the balance, no one will rest until the Seven Kingdoms have exploded in a veritable storm of swords. . .',
+  },
+  {
+    title_short: 'A Clash of Kings',
+    title_long: 'A Song of Ice and Fire 02. A Clash of Kings',
+    author: 'George R.R. Martin',
+    genre: 'Fantasy',
+    pages: 1040,
+    publisher: 'Random House',
+    publication_date: '9/1/2000',
+    lang: 'English',
+    isbn: '978-0-553-57990-1',
+    star_rating: 4.7,
+    reviews: 10277,
+    img: 'a clash of kings.jpg',
+    used_price: 1.996666667,
+    currency: 'EUR',
+    new_price: 5.99,
+    descript:
+      'A comet the color of blood and flame cuts across the sky. And from the ancient citadel of Dragonstone to the forbidding shores of Winterfell, chaos reigns. Six factions struggle for control of a divided land and the Iron Throne of the Seven Kingdoms, preparing to stake their claims through tempest, turmoil, and war. It is a tale in which brother plots against brother and the dead rise to walk in the night. Here a princess masquerades as an orphan boy; a knight of the mind prepares a poison for a treacherous sorceress; and wild men descend from the Mountains of the Moon to ravage the countryside. Against a backdrop of incest and fratricide, alchemy and murder, victory may go to the men and women possessed of the coldest steel...and the coldest hearts. For when kings clash, the whole land trembles.',
+  },
+  {
+    title_short: 'A Feast for Crows',
+    title_long: 'A Feast for Crows: A Song of Ice and Fire: Book Four',
+    author: 'George R.R. Martin',
+    genre: 'Fantasy',
+    pages: 1104,
+    publisher: 'Bantam',
+    publication_date: '9/26/2006',
+    lang: 'English',
+    isbn: '978-0553582024',
+    star_rating: 4.5,
+    reviews: 8901,
+    img: 'a feast for crows.jpg',
+    used_price: 2.93,
+    currency: 'EUR',
+    new_price: 8.79,
+    descript:
+      'It seems too good to be true. After centuries of bitter strife and fatal treachery, the seven powers dividing the land have decimated one another into an uneasy truce. Or so it appears. . . . With the death of the monstrous King Joffrey, Cersei is ruling as regent in King’s Landing. Robb Stark’s demise has broken the back of the Northern rebels, and his siblings are scattered throughout the kingdom like seeds on barren soil. Few legitimate claims to the once desperately sought Iron Throne still exist—or they are held in hands too weak or too distant to wield them effectively. The war, which raged out of control for so long, has burned itself out.\r\n\r\nBut as in the aftermath of any climactic struggle, it is not long before the survivors, outlaws, renegades, and carrion eaters start to gather, picking over the bones of the dead and fighting for the spoils of the soon-to-be dead. Now in the Seven Kingdoms, as the human crows assemble over a banquet of ashes, daring new plots and dangerous new alliances are formed, while surprising faces—some familiar, others only just appearing—are seen emerging from an ominous twilight of past struggles and chaos to take up the challenges ahead.\r\n\r\nIt is a time when the wise and the ambitious, the deceitful and the strong will acquire the skills, the power, and the magic to survive the stark and terrible times that lie before them. It is a time for nobles and commoners, soldiers and sorcerers, assassins and sages to come together and stake their fortunes . . . and their lives. For at a feast for crows, many are the guests—but only a few are the survivors.',
+  },
+  {
+    title_short: 'A Dance with Dragons',
+    title_long: 'A Dance with Dragons: A Song of Ice and Fire: Book Five',
+    author: 'George R.R. Martin',
+    genre: 'Fantasy',
+    pages: 1136,
+    publisher: 'Bantam',
+    publication_date: '3/15/2012',
+    lang: 'English',
+    isbn: '978-0553841121',
+    star_rating: 4.5,
+    reviews: 13135,
+    img: 'a dance with dragons.jpg',
+    used_price: 2.156666667,
+    currency: 'EUR',
+    new_price: 6.47,
+    descript:
+      'In the aftermath of a colossal battle, Daenerys Targaryen rules with her three dragons as queen of a city built on dust and death. But Daenerys has thousands of enemies, and many have set out to find her. Fleeing from Westeros with a price on his head, Tyrion Lannister, too, is making his way east—with new allies who may not be the ragtag band they seem. And in the frozen north, Jon Snow confronts creatures from beyond the Wall of ice and stone, and powerful foes from within the Night’s Watch. In a time of rising restlessness, the tides of destiny and politics lead a grand cast of outlaws and priests, soldiers and skinchangers, nobles and slaves, to the greatest dance of all.',
+  },
+  {
+    title_short: 'Harry Potter and the Deathly Hallows:',
+    title_long:
+      'Harry Potter and the Deathly Hallows: J.K. Rowling (Harry Potter 7)',
+    author: 'Joanne K. Rowling',
+    genre: 'Young Adult',
+    pages: 608,
+    publisher: 'Bloomsbury',
+    publication_date: '7/21/2007',
+    lang: 'English',
+    isbn: '9780747591054',
+    star_rating: 4.8,
+    reviews: 21338,
+    img: 'harry potter and the deathly hallows.jpg',
+    used_price: 4.903333333,
+    currency: 'EUR',
+    new_price: 14.71,
+    descript:
+      "As he climbs into the sidecar of Hagrid's motorbike and takes to the skies, leaving Privet Drive for the last time, Harry Potter knows that Lord Voldemort and the Death Eaters are not far behind. The protective charm that has kept Harry safe until now is now broken, but he cannot keep hiding. The Dark Lord is breathing fear into everything Harry loves, and to stop him Harry will have to find and destroy the remaining Horcruxes. The final battle must begin - Harry must stand and face his enemy.\r\n\r\nThese new editions of the classic and internationally bestselling, multi-award-winning series feature instantly pick-up-able new jackets by Jonny Duddle, with huge child appeal, to bring Harry Potter to the next generation of readers. It's time to PASS THE MAGIC ON .",
+  },
+  {
+    title_short: 'Harry Potter and the Half-Blood Prince',
+    title_long: 'Harry Potter and the Half-Blood Prince (Harry Potter 6)',
+    author: 'Joanne K. Rowling',
+    genre: 'Young Adult',
+    pages: 608,
+    publisher: 'Bloomsbury',
+    publication_date: '7/16/2005',
+    lang: 'English',
+    isbn: '9780747581086',
+    star_rating: 4.8,
+    reviews: 19472,
+    img: 'harry_potter_and_the_half-blood_prince.jpg',
+    used_price: 7.493333333,
+    currency: 'EUR',
+    new_price: 22.48,
+    descript:
+      "When Dumbledore arrives at Privet Drive one summer night to collect Harry Potter, his wand hand is blackened and shrivelled, but he does not reveal why. Secrets and suspicion are spreading through the wizarding world, and Hogwarts itself is not safe. Harry is convinced that Malfoy bears the Dark Mark: there is a Death Eater amongst them. Harry will need powerful magic and true friends as he explores Voldemort's darkest secrets, and Dumbledore prepares him to face his destiny.\r\n\r\nThese new editions of the classic and internationally bestselling, multi-award-winning series feature instantly pick-up-able new jackets by Jonny Duddle, with huge child appeal, to bring Harry Potter to the next generation of readers. It's time to PASS THE MAGIC ON .",
+  },
+  {
+    title_short: 'Harry Potter and the Cursed Child',
+    title_long:
+      'Harry Potter and the Cursed Child - Parts One and Two (Special Rehearsal Edition): The Official Script Book of the Original West End Production',
+    author: 'Joanne K. Rowling',
+    genre: 'Young Adult',
+    pages: 352,
+    publisher: 'Little Brown Book Group',
+    publication_date: '7/31/2016',
+    lang: 'English',
+    isbn: '9780751565355',
+    star_rating: 4.1,
+    reviews: 24596,
+    img: 'harry_potter_and_the_cursed_child.jpg',
+    used_price: 6.393333333,
+    currency: 'EUR',
+    new_price: 19.18,
+    descript:
+      "Based on an original new story by J.K. Rowling, John Tiffany and Jack Thorne, a new play by Jack Thorne, Harry Potter and the Cursed Child is the eighth story in the Harry Potter series and the first official Harry Potter story to be presented on stage. The play will receive its world premiere in London's West End on 30th July 2016.\r\n\r\nIt was always difficult being Harry Potter and it isn't much easier now that he is an overworked employee of the Ministry of Magic, a husband, and father of three school-age children.\r\n\r\nWhile Harry grapples with a past that refuses to stay where it belongs, his youngest son Albus must struggle with the weight of a family legacy he never wanted. As past and present fuse ominously, both father and son learn the uncomfortable truth: sometimes, darkness comes from unexpected places.",
+  },
+  {
+    title_short: 'Der Glanz des Mondes',
+    title_long: 'Der Clan der Otori, Band 3: Der Glanz des Mondes',
+    author: 'Lian Hearn',
+    genre: 'Fantasy',
+    pages: 496,
+    publisher: 'Carlsen',
+    publication_date: '5/21/2005',
+    lang: 'German',
+    isbn: '978-3551581112',
+    star_rating: 4.6,
+    reviews: 71,
+    img: 'der glanz des mondes.jpg',
+    used_price: 3.923333333,
+    currency: 'EUR',
+    new_price: 11.77,
+    descript:
+      'Endlich ist Takeo mit Kaede vereint. Heimlich und gegen den Willen der Clans, haben sie sich vermählt. Doch den Liebenden bleibt nicht viel Zeit, ihr gemeinsames Glück zu genießen. Denn die Otorilords, die Takeos Herrschaftsanspruch bestreiten, rüsten bereits zum Kampf gegen ihn. Mit seinen Getreuen zieht Takeo in die Schlacht. Und Kaede bleibt zurück, voller unguter Vorahnungen. Nun wird sich zeigen, ob die Prophezeiung, die ihrem Geliebten einst gemacht wurde, sich erfüllt.',
+  },
+  {
+    title_short: 'World Without End',
+    title_long: 'World Without End: A Novel (Kingsbridge, Band 2)',
+    author: 'Ken Follett',
+    genre: 'Historical Fiction',
+    pages: 1056,
+    publisher: 'Penguin',
+    publication_date: '7/26/2010',
+    lang: 'English',
+    isbn: '978-0451228376',
+    star_rating: 4.6,
+    reviews: 550,
+    img: 'world without end.jpg',
+    used_price: 2.42,
+    currency: 'EUR',
+    new_price: 7.26,
+    descript:
+      'World Without End takes place in the same town of Kingsbridge, two centuries after the townspeople finished building the exquisite Gothic cathedral that was at the heart of The Pillars of the Earth. The cathedral and the priory are again at the center of a web of love and hate, greed and pride, ambition and revenge, but this sequel stands on its own. This time the men and women of an extraordinary cast of characters find themselves at a crossroads of new ideas—about medicine, commerce, architecture, and justice. In a world where proponents of the old ways fiercely battle those with progressive minds, the intrigue and tension quickly reach a boiling point against the devastating backdrop of the greatest natural disaster ever to strike the human race—the Black Death. \r\n\r\nThree years in the writing and nearly eighteen years since its predecessor, World Without End is a "well-researched, beautifully detailed portrait of the late Middle Ages" (The Washington Post) that once again shows that Ken Follett is a masterful author writing at the top of his craft.',
+  },
+  {
+    title_short: 'The Pillars of the Earth',
+    title_long: 'The Pillars of the Earth: A Novel (Kingsbridge, Band 1)',
+    author: 'Ken Follett',
+    genre: 'Historical Fiction',
+    pages: 1024,
+    publisher: 'Penguin',
+    publication_date: '7/9/1990',
+    lang: 'English',
+    isbn: '978-0451166890',
+    star_rating: 4.5,
+    reviews: 15266,
+    img: 'pliiars of the earth.jpg',
+    used_price: 2.436666667,
+    currency: 'EUR',
+    new_price: 7.31,
+    descript:
+      '“Follett is a master,” extolled the Washington Post on the release of The Pillars of the Earth. A departure for the bestselling thriller writer, the historical epic stunned readers and critics alike with its ambitious scope and gripping humanity. Today, it stands as a testament to Follett’s unassailable command of the written word and to his universal appeal. \r\n \r\nThe Pillars of the Earth tells the story of Philip, prior of Kingsbridge, a devout and resourceful monk driven to build the greatest Gothic cathedral the world has known . . . of Tom, the mason who becomes his architect—a man divided in his soul . . . of the beautiful, elusive Lady Aliena, haunted by a secret shame . . . and of a struggle between good and evil that will turn church against state and brother against brother.\r\n \r\nA spellbinding epic tale of ambition, anarchy, and absolute power set against the sprawling medieval canvas of twelfth-century England, this is Ken Follett’s historical masterpiece.',
+  },
+  {
+    title_short: "The Wise Man's Fear",
+    title_long: "The Wise Man's Fear: The Kingkiller Chronicle: Day Two",
+    author: 'Patrick Rothfuss',
+    genre: 'Fantasy',
+    pages: 1120,
+    publisher: 'DAW',
+    publication_date: '4/2/2013',
+    lang: 'English',
+    isbn: '978-0756407919',
+    star_rating: 4.7,
+    reviews: 13105,
+    img: 'the wise mans fear.jpg',
+    used_price: 2.646666667,
+    currency: 'EUR',
+    new_price: 7.94,
+    descript:
+      '“There are three things all wise men fear: the sea in storm, a night with no moon, and the anger of a gentle man.”\r\n \r\nMy name is Kvothe. You may have heard of me.\r\n \r\nSo begins a tale told from his own point of view—a story unequaled in fantasy literature. Now in The Wise Man’s Fear, Day Two of The Kingkiller Chronicle, Kvothe takes his first steps on the path of the hero and learns how difficult life can be when a man becomes a legend in his own time.',
+  },
 ];
 
 exports.up = async function up(sql) {
@@ -242,27 +454,8 @@ exports.up = async function up(sql) {
 };
 
 exports.down = async function down(sql) {
-  for (const product of products) {
-    await sql`
+  await sql`
 		DELETE FROM
 			products
-		WHERE
-			title_short = ${product.title_short} AND
-			title_long = ${product.title_long} AND
-			author = ${product.author} AND
-			genre = ${product.genre} AND
-			pages = ${product.pages} AND
-			publisher = ${product.publisher} AND
-			publication_date = ${product.publication_date} AND
-			lang = ${product.lang} AND
-			isbn = ${product.isbn} AND
-			star_rating = ${product.star_rating} AND
-			reviews = ${product.reviews} AND
-			img = ${product.img} AND
-			used_price = ${product.used_price} AND
-			currency = ${product.currency} AND
-			new_price = ${product.new_price} AND
-			descript = ${product.descript}
-		`;
-  }
+`;
 };

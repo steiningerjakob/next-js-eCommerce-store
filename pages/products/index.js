@@ -1,5 +1,6 @@
 // ToDos:
-// 1) Prio B: enable multiple checkbox filtering
+// 1) Fix search function so that correct image renders
+// Prio B: move search bar to header
 
 import { css } from '@emotion/react';
 import Head from 'next/head';
@@ -7,6 +8,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import ReactStars from 'react-rating-stars-component';
 import Layout from '../../components/Layout';
+import SearchField from '../../components/SearchField';
 import { addBookByBookId } from '../../util/cookies';
 
 const containerStyles = css`
@@ -43,10 +45,16 @@ const productListContainer = css`
   justify-content: flex-start;
   flex-wrap: wrap;
   margin-left: 24px;
+
+  > p {
+    margin-left: 256px;
+    margin-top: -27px;
+  }
 `;
 
 const productContainer = css`
   width: 256px;
+  max-height: 352px;
   background-color: #f5f5f5;
   box-shadow: 1px 1px 8px 1px #dcdcdc;
   border-radius: 8px;
@@ -110,7 +118,7 @@ export default function Products(props) {
     ...new Set(props.products.map((book) => book.lang)),
   ].concat(...['All languages']);
 
-  // // state variables for filters
+  // state variables for filters
   const [genreFilter, setGenreFilter] = useState('All genres');
   const [languageFilter, setLanguageFilter] = useState('All languages');
 
@@ -127,7 +135,7 @@ export default function Products(props) {
           <div>
             <ul css={ulStyles}>Filter by Genre</ul>
             {uniqueGenres.map((genre) => (
-              <li key={`genre-${genre.id}`} css={liStyles}>
+              <li key={`genre-${genre.name}`} css={liStyles}>
                 <input
                   type="radio"
                   value={genre}
@@ -141,7 +149,7 @@ export default function Products(props) {
             ))}
             <ul css={ulStyles}>Filter by Language</ul>
             {uniqueLanguages.map((lang) => (
-              <li key={`lang-${lang.id}`} css={liStyles}>
+              <li key={`lang-${lang.name}`} css={liStyles}>
                 <input
                   type="radio"
                   value={lang}
@@ -156,73 +164,88 @@ export default function Products(props) {
           </div>
         </div>
         <div css={productListContainer}>
-          {props.products
-            .filter((b) => {
-              if (genreFilter === 'All genres') {
-                return true;
-              } else if (genreFilter === b.genre) {
-                return true;
-              } else {
-                return false;
-              }
-            })
-            .filter((b) => {
-              if (languageFilter === 'All languages') {
-                return true;
-              } else if (languageFilter === b.lang) {
-                return true;
-              } else {
-                return false;
-              }
-            })
-            .map((b) => (
-              <div css={productContainer} key={`book-${b.id}`}>
-                <Link href={`/products/${b.id}`}>
-                  <a data-cy="product-list-single-product-link">
-                    <img css={imgStyles} src={`/${b.img}`} alt={b.titleShort} />{' '}
-                  </a>
-                </Link>
-                <button
-                  onClick={() => {
-                    props.setShoppingCart(addBookByBookId(b.id));
-                    alert('Product added to shopping bag!');
-                  }}
-                  css={buttonStyles}
-                >
-                  +
-                </button>
-
-                <p css={titleStyles}>{b.titleShort}</p>
-                <p> by {b.author}</p>
-                <p css={priceStyles}>
-                  {' '}
-                  {b.currency} {b.usedPrice.toFixed(2)}
-                </p>
-                <div css={starStyles}>
-                  <ReactStars
-                    count={5}
-                    size={15}
-                    value={b.starRating}
-                    isHalf={true}
-                    edit={false}
-                  />
+          {props.filteredProducts.length === 0 ? (
+            <p>Didn't find any books that match your search... try again</p>
+          ) : (
+            props.filteredProducts
+              .filter((b) => {
+                if (genreFilter === 'All genres') {
+                  return true;
+                } else if (genreFilter === b.genre) {
+                  return true;
+                } else {
+                  return false;
+                }
+              })
+              .filter((b) => {
+                if (languageFilter === 'All languages') {
+                  return true;
+                } else if (languageFilter === b.lang) {
+                  return true;
+                } else {
+                  return false;
+                }
+              })
+              .map((b) => (
+                <div css={productContainer} key={`book-${b.id}`}>
+                  <Link href={`/products/${b.id}`}>
+                    <a data-cy="product-list-single-product-link">
+                      <img
+                        css={imgStyles}
+                        src={`/${b.img}`}
+                        alt={b.titleShort}
+                      />{' '}
+                    </a>
+                  </Link>
+                  {/* search function renders wrong image and link */}
+                  <button
+                    onClick={() => {
+                      props.setShoppingCart(addBookByBookId(b.id));
+                      alert('Product added to shopping bag!');
+                    }}
+                    css={buttonStyles}
+                  >
+                    +
+                  </button>
+                  <p css={titleStyles}>{b.titleShort}</p>
+                  <p> by {b.author}</p>
+                  <p css={priceStyles}>
+                    {' '}
+                    {b.currency} {b.usedPrice.toFixed(2)}
+                  </p>
+                  <div css={starStyles}>
+                    <ReactStars
+                      count={5}
+                      size={15}
+                      value={b.starRating}
+                      isHalf={true}
+                      edit={false}
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+          )}
         </div>
       </div>
     </Layout>
   );
 }
 
-export async function getServerSideProps() {
-  const { getAllProducts } = await import('../../util/database');
+export async function getServerSideProps(context) {
+  const { getAllProducts, searchFunction } = await import(
+    '../../util/database'
+  );
 
   const products = await getAllProducts();
 
+  // 1. get current search query value from url
+  const filteredProducts = await searchFunction(context.query.s);
+  console.log(context.query);
+
   return {
     props: {
-      products,
+      products: products,
+      filteredProducts: filteredProducts,
     },
   };
 }

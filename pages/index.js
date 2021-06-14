@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Layout from '../components/Layout';
 
 export default function Home(props) {
+  console.log(props);
   const containerStyles = css`
     background-image: url('title photo.jpg');
     background-size: cover;
@@ -61,7 +62,6 @@ export default function Home(props) {
             </a>
           </Link>
         </div>
-        {/* <img src="title photo.jpg" alt="books" css={imgStyles} /> */}
       </div>
     </Layout>
   );
