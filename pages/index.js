@@ -4,20 +4,20 @@ import Link from 'next/link';
 import Layout from '../components/Layout';
 
 export default function Home(props) {
-  console.log(props);
-  const containerStyles = css`
+  const backgroundStyles = css`
     background-image: url('title photo.jpg');
     background-size: cover;
-    opacity: 0.9;
+    opacity: 0.7;
+  `;
 
-    > div {
-      display: flex;
-      position: relative;
-      width: 1200px;
-      height: 640px;
-      justify-content: center;
-      align-items: center;
-    }
+  const containerStyles = css`
+    display: flex;
+    position: relative;
+    width: 1200px;
+    height: 640px;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
   `;
 
   const navButtonStyles = (variant = 'main') => css`
@@ -54,8 +54,8 @@ export default function Home(props) {
       <Head>
         <title>Home</title>
       </Head>
-      <div css={containerStyles}>
-        <div>
+      <div css={backgroundStyles}>
+        <div css={containerStyles}>
           <Link href="/products">
             <a>
               <button css={navButtonStyles()}>Check out our shop</button>

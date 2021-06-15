@@ -1,15 +1,13 @@
-// ToDos:
-// 1) Fix search function so that correct image renders
-// Prio B: move search bar to header
-
 import { css } from '@emotion/react';
+import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import ReactStars from 'react-rating-stars-component';
 import Layout from '../../components/Layout';
-import SearchField from '../../components/SearchField';
-import { addBookByBookId } from '../../util/cookies';
+import { convertQueryValueToStringLike } from '../../util/context';
+import { addBookByBookId, ShoppingCart } from '../../util/cookies';
+import { Product } from '../../util/database';
 
 const containerStyles = css`
   margin: 0px 16px;
@@ -109,7 +107,14 @@ const starStyles = css`
   left: 35%;
 `;
 
-export default function Products(props) {
+type Props = {
+  shoppingCart: ShoppingCart;
+  setShoppingCart: Dispatch<SetStateAction<ShoppingCart>>;
+  products: Product[];
+  filteredProducts: Product[];
+};
+
+export default function Products(props: Props) {
   // create list of unique genres from products array
   const uniqueGenres = [
     ...new Set(props.products.map((book) => book.genre)),
@@ -135,7 +140,7 @@ export default function Products(props) {
           <div>
             <ul css={ulStyles}>Filter by Genre</ul>
             {uniqueGenres.map((genre) => (
-              <li key={`genre-${genre.name}`} css={liStyles}>
+              <li key={`genre-${genre}`} css={liStyles}>
                 <input
                   type="radio"
                   value={genre}
@@ -149,7 +154,7 @@ export default function Products(props) {
             ))}
             <ul css={ulStyles}>Filter by Language</ul>
             {uniqueLanguages.map((lang) => (
-              <li key={`lang-${lang.name}`} css={liStyles}>
+              <li key={`lang-${lang}`} css={liStyles}>
                 <input
                   type="radio"
                   value={lang}
@@ -189,11 +194,12 @@ export default function Products(props) {
               .map((b) => (
                 <div css={productContainer} key={`book-${b.id}`}>
                   <Link href={`/products/${b.id}`}>
-                    <a data-cy="product-list-single-product-link">
+                    <a>
                       <img
                         css={imgStyles}
                         src={`/${b.img}`}
                         alt={b.titleShort}
+                        data-cy="product-list-single-product-link"
                       />{' '}
                     </a>
                   </Link>
@@ -211,13 +217,13 @@ export default function Products(props) {
                   <p> by {b.author}</p>
                   <p css={priceStyles}>
                     {' '}
-                    {b.currency} {b.usedPrice.toFixed(2)}
+                    {b.currency} {Number(b.usedPrice).toFixed(2)}
                   </p>
                   <div css={starStyles}>
                     <ReactStars
                       count={5}
                       size={15}
-                      value={b.starRating}
+                      value={Number(b.starRating)}
                       isHalf={true}
                       edit={false}
                     />
@@ -231,16 +237,17 @@ export default function Products(props) {
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { getAllProducts, searchFunction } = await import(
     '../../util/database'
   );
 
   const products = await getAllProducts();
 
-  // 1. get current search query value from url
-  const filteredProducts = await searchFunction(context.query.s);
-  console.log(context.query);
+  // get current search query value from url and
+  // parse to stringlike (i.e. not array of strings)
+  const query = convertQueryValueToStringLike(context.query.s);
+  const filteredProducts = await searchFunction(query);
 
   return {
     props: {

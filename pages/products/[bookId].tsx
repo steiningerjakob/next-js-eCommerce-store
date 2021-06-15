@@ -5,7 +5,9 @@ import Link from 'next/link';
 import { Dispatch, SetStateAction, useState } from 'react';
 import ReactStars from 'react-rating-stars-component';
 import Layout from '../../components/Layout';
+import { convertQueryValue } from '../../util/context';
 import { addBookByBookId, ShoppingCart } from '../../util/cookies';
+import { Product } from '../../util/database';
 
 const gridStyles = css`
   display: grid;
@@ -91,34 +93,13 @@ const navButtonStyles = (variant = 'main') => css`
   `}
 `;
 
-type Product = {
-  author: string;
-  currency: string;
-  descript: string;
-  genre: string;
-  id: number;
-  img: string;
-  isbn: string;
-  lang: string;
-  newPrice: number;
-  pages: number;
-  publicationDate: string;
-  publisher: string;
-  reviews: number;
-  starRating: number;
-  titleLong: string;
-  titleShort: string;
-  usedPrice: number;
-};
-
 type Props = {
   shoppingCart: ShoppingCart;
-  singleProduct: Product;
+  singleProduct?: Product;
   setShoppingCart: Dispatch<SetStateAction<ShoppingCart>>;
 };
 
 export default function ProductDetails(props: Props) {
-  console.log(props.shoppingCart[0].quantity);
   // state variable and event handler for "read more" component
   // see also: https://www.geeksforgeeks.org/how-to-create-a-read-more-component-in-reactjs/
   const [readMoreIsActive, setReadMoreIsActive] = useState(true);
@@ -216,20 +197,22 @@ export default function ProductDetails(props: Props) {
           <p css={headingStyles}>Buy used from us:</p>
           <p css={priceStyles}>
             {props.singleProduct.currency}{' '}
-            {props.singleProduct.usedPrice.toFixed(2)}
+            {Number(props.singleProduct.usedPrice).toFixed(2)}
           </p>
           <p css={amazonStyles}>
             (Amazon's price: {props.singleProduct.currency}{' '}
-            {props.singleProduct.newPrice.toFixed(2)})
+            {Number(props.singleProduct.newPrice).toFixed(2)})
           </p>
           <p>Expected delivery date: {getDeliveryDate()}</p>
           <Link href="../../shoppingcart">
             <a data-cy="single-product-shopping-cart-link">
               <button
                 onClick={() => {
-                  props.setShoppingCart(
-                    addBookByBookId(props.singleProduct.id),
-                  );
+                  if (props.singleProduct) {
+                    props.setShoppingCart(
+                      addBookByBookId(props.singleProduct.id),
+                    );
+                  }
                 }}
                 css={navButtonStyles()}
               >
@@ -252,13 +235,13 @@ export default function ProductDetails(props: Props) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { getProductById } = await import('../../util/database');
-  const bookId = context.query.bookId;
+  const bookId = convertQueryValue(context.query.bookId);
 
   const singleProduct = await getProductById(bookId);
 
   return {
     props: {
-      singleProduct: singleProduct || null,
+      singleProduct,
     },
   };
 }

@@ -1,7 +1,7 @@
 import cookies from 'js-cookie';
 
 export type ShoppingCart = {
-  id: number;
+  id?: number;
   quantity: number;
 }[];
 
@@ -10,23 +10,22 @@ export function getShoppingCartCookieValue(): ShoppingCart {
   return Array.isArray(cookieValue) ? cookieValue : [];
 }
 
-export function addBookByBookId(bookId: number) {
+export function addBookByBookId(bookId?: number) {
   const newCookieValue = [...getShoppingCartCookieValue()];
   const bookBookIdInCookie = newCookieValue.find((b) => b.id === bookId);
-
-  if (bookBookIdInCookie) {
-    bookBookIdInCookie.quantity = bookBookIdInCookie.quantity + 1;
-  } else {
+  if (!bookBookIdInCookie) {
     newCookieValue.push({
       id: bookId,
       quantity: 1,
     });
+  } else {
+    bookBookIdInCookie.quantity = bookBookIdInCookie.quantity + 1;
   }
   cookies.set('shoppingcart', newCookieValue);
   return newCookieValue;
 }
 
-export function subtractBookByBookId(bookId: number) {
+export function subtractBookByBookId(bookId?: number) {
   const minValue = 0;
   const newCookieValue = [...getShoppingCartCookieValue()];
   const bookBookIdInCookie = newCookieValue.find((b) => b.id === bookId);

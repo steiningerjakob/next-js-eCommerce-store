@@ -255,10 +255,12 @@ export default function ShoppingCartPage(props) {
                       css={buttonStyles}
                     >
                       <IconContext.Provider
-                        value={{ color: 'grey', title: 'trash icon' }}
+                        value={{
+                          title: 'trash icon',
+                        }}
                       >
                         <div>
-                          <FaTrash />
+                          <FaTrash color="grey" />
                         </div>
                       </IconContext.Provider>
                     </button>

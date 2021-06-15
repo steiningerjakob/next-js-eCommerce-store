@@ -1,11 +1,7 @@
-// ToDos:
-// 1) Stretch: add user authentication functionality (Clerk vs. self-built)
-// 2) "Breadcrumb" functionality to see where you are on the page flow
-
 import { css } from '@emotion/react';
 import Link from 'next/link';
 import { IconContext } from 'react-icons';
-import { FaShoppingBag, FaUserCircle } from 'react-icons/fa';
+import { FaShoppingBag } from 'react-icons/fa';
 import SearchField from './SearchField';
 
 const headerStyles = css`
@@ -45,6 +41,7 @@ const headerStyles = css`
 const searchBarContainer = css`
   display: flex;
   align-items: center;
+  margin-right: -48px;
 `;
 
 export default function Header(props) {
@@ -62,42 +59,28 @@ export default function Header(props) {
         <SearchField />
       </div>
       <div>
-        <div>
-          <Link href="/login">
-            <a data-cy="header-user-login-link">
-              <IconContext.Provider
-                value={{ size: '1.5em', title: 'user login icon' }}
-              >
-                <div>
-                  <FaUserCircle />
-                </div>
-              </IconContext.Provider>
-            </a>
-          </Link>
-        </div>
-
-        <div>
-          <Link href="/shoppingcart">
-            <a data-cy="header-shopping-cart-link">
-              <IconContext.Provider
-                value={{ size: '1.5em', titl: 'shopping bag icon' }}
-              >
-                <div>
-                  <FaShoppingBag />
-                </div>
-              </IconContext.Provider>
-              (
-              {props.shoppingCart
-                .map((item) => item.quantity)
-                .reduce(
-                  (accumulator, currentValue) => accumulator + currentValue,
-                  0,
-                )
-                .toFixed(0)}
+        <Link href="/shoppingcart">
+          <a data-cy="header-shopping-cart-link">
+            <IconContext.Provider
+              value={{
+                title: 'trash icon',
+              }}
+            >
+              <div>
+                <FaShoppingBag size="1.5em" />
+              </div>
+            </IconContext.Provider>
+            (
+            {props.shoppingCart
+              .map((item) => item.quantity)
+              .reduce(
+                (accumulator, currentValue) => accumulator + currentValue,
+                0,
               )
-            </a>
-          </Link>
-        </div>
+              .toFixed(0)}
+            )
+          </a>
+        </Link>
       </div>
     </header>
   );

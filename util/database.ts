@@ -2,8 +2,33 @@ import camelcaseKeys from 'camelcase-keys';
 import dotenvSafe from 'dotenv-safe';
 import postgres from 'postgres';
 
+export type Product = {
+  author: string;
+  currency: string;
+  descript: string;
+  genre: string;
+  id: number;
+  img: string;
+  isbn: string;
+  lang: string;
+  newPrice: number;
+  pages: number;
+  publicationDate: string;
+  publisher: string;
+  reviews: number;
+  starRating: number;
+  titleLong: string;
+  titleShort: string;
+  usedPrice: number;
+};
+
 // Read Postgres secret connection from .env file
 dotenvSafe.config();
+
+declare module globalThis {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  let __postgresSqlClient: ReturnType<typeof postgres> | undefined;
+}
 
 // Connect only once to the database
 // https://github.com/vercel/next.js/issues/7811#issuecomment-715259370
@@ -31,7 +56,7 @@ const sql = connectOneTimeToDatabase();
 // Perform queries:
 // 1. All products
 export async function getAllProducts() {
-  const products = await sql`
+  const products = await sql<Product[]>`
   SELECT
     *
   FROM
@@ -40,8 +65,8 @@ export async function getAllProducts() {
 }
 
 // 2. Single product by some criterion / identifier
-export async function getProductById(id) {
-  const singleProduct = await sql`
+export async function getProductById(id?: number) {
+  const singleProduct = await sql<[Product]>`
     SELECT
     *
     FROM
@@ -52,8 +77,8 @@ export async function getProductById(id) {
   return singleProduct.map((product) => camelcaseKeys(product))[0];
 }
 
-export async function getProductsByGenre(id) {
-  const products = await sql`
+export async function getProductsByGenre(id?: number) {
+  const products = await sql<Product[]>`
     SELECT
     *
     FROM
@@ -64,8 +89,8 @@ export async function getProductsByGenre(id) {
   return products.map((product) => camelcaseKeys(product));
 }
 
-export async function getProductByLanguage(id) {
-  const products = await sql`
+export async function getProductByLanguage(id?: number) {
+  const products = await sql<Product[]>`
     SELECT
     *
     FROM
@@ -79,8 +104,8 @@ export async function getProductByLanguage(id) {
 // adapted from:
 // https://www.emgoto.com/react-search-bar/
 
-export async function searchFunction(query) {
-  const products = await sql`
+export async function searchFunction(query?: string) {
+  const products = await sql<Product[]>`
     SELECT
       *
     FROM
@@ -92,15 +117,11 @@ export async function searchFunction(query) {
       products
         // filter book descriptions that include query
         .filter((b) => {
-          const productDescription = b.descript.toLowerCase();
-          return productDescription.includes(query);
+          return Object.values(b).some((str) =>
+            String(str).toLowerCase().includes(query),
+          );
         })
         .map((product) => camelcaseKeys(product))
     );
   }
 }
-// This will transform ALL array elements to lower case,
-// but for some reason not working for search
-// const allArrayElementsToLowerCase = products.map((b) =>
-//     String.prototype.toLowerCase.apply(JSON.stringify(b)),
-//   );
