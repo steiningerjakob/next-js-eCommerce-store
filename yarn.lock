@@ -1045,6 +1045,13 @@
     "@popperjs/core" "^2.9.2"
     "@types/jquery" "*"
 
+"@types/camelcase-keys@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@types/camelcase-keys/-/camelcase-keys-5.1.1.tgz#98b0401e7e759fee9ccf2ee1a32a26dc33b87e01"
+  integrity sha512-Nlr/xdCry/Zbr5Q3jaDazCHf0FfeETVVaDVXUszP8DUUvVfkc/kt7Mab8TaNkKS6s7AE8qNFqjYLL9Y8zKA0Bg==
+  dependencies:
+    camelcase-keys "*"
+
 "@types/dotenv-safe@^8.1.1":
   version "8.1.1"
   resolved "https://registry.yarnpkg.com/@types/dotenv-safe/-/dotenv-safe-8.1.1.tgz#2d7248ed4ad969c41d85586266ad64e9a3603ad4"
@@ -1915,7 +1922,7 @@ callsites@^3.0.0:
   resolved "https://registry.yarnpkg.com/callsites/-/callsites-3.1.0.tgz#b3630abd8943432f54b3f0519238e33cd7df2f73"
   integrity sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==
 
-camelcase-keys@^6.2.2:
+camelcase-keys@*, camelcase-keys@^6.2.2:
   version "6.2.2"
   resolved "https://registry.yarnpkg.com/camelcase-keys/-/camelcase-keys-6.2.2.tgz#5e755d6ba51aa223ec7d3d52f25778210f9dc3c0"
   integrity sha512-YrwaA0vEKazPBkn0ipTiMpSajYDSe+KjQfrjhcBMxJt/znbvlHd8Pw/Vamaz5EB4Wfhs3SUR3Z9mwRu/P3s3Yg==

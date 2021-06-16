@@ -8,16 +8,19 @@ This is a Next.js-based eCommerce store developed for educational purposes, i.e.
 
 - Next.js (including React and node.js)
 - PostgresQL database populated with mock data generated in a simple Google Sheets table
-  ![Google Sheets mock data screenshot](GSheets mock database screenshot.png)
+  ![Google Sheets mock data screenshot](/public/GSheets mock database screenshot.png)
 - Ley for data migration
 - Cypress for e2e testing
 - Jest for unit testing
 - Miro for site-flow drafting:
-  ![Miro site flow screenshot](miro site flow screenshot.png)
+  ![Miro site flow screenshot](/public/miro site flow screenshot.png)
 
 ## Setup instructions
 
-...
+- GitClone GitHub repo on your local machine
+- Install Next.js by running _yarn add create-next-app_
+- Similarly, install PostgreSQL for database function and other required dependencies
+- Run _yarn dev_ to start the server and go to the proposed host url
 
 ## Deployment instructions
 
