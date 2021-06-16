@@ -6,14 +6,14 @@ This is a Next.js-based eCommerce store developed for educational purposes, i.e.
 
 ## Technologies used
 
-- Next.js (including React and node.js)
+- Next.js for frontend and server-side-rendering
+- Miro for site-flow drafting:
+  <img src='public/miro site flow screenshot.png'>
 - PostgresQL database populated with mock data generated in a simple Google Sheets table
-  ![Google Sheets mock data screenshot](public/GSheets mock database screenshot.png?raw=true)
+  <img src='public/GSheets mock database screenshot.png'>
 - Ley for data migration
 - Cypress for e2e testing
 - Jest for unit testing
-- Miro for site-flow drafting:
-  ![Miro site flow screenshot](public/miro site flow screenshot.png?raw=true)
 
 ## Setup instructions
 
