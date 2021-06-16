@@ -9,6 +9,7 @@ This is a Next.js-based eCommerce store developed for educational purposes, i.e.
 - Next.js (including React and node.js)
 - PostgresQL database populated with mock data generated in a simple Google Sheets table
   ![Google Sheets mock data screenshot](GSheets mock database screenshot.png)
+- Ley for data migration
 - Cypress for e2e testing
 - Jest for unit testing
 - Miro for site-flow drafting:
