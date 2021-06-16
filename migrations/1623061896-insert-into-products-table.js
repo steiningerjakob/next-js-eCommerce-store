@@ -431,7 +431,7 @@ const products = [
 
 exports.up = async function up(sql) {
   await sql`
-		INSERT INTO products ${sql(
+    INSERT INTO products ${sql(
       products,
       'title_short',
       'title_long',
