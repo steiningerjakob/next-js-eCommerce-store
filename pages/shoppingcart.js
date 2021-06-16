@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { IconContext } from 'react-icons';
 import { FaTrash } from 'react-icons/fa';
-import Layout from '../components/Layout';
 import {
   addBookByBookId,
   removeBookFromShoppingCart,
@@ -144,10 +143,7 @@ export default function ShoppingCartPage(props) {
   );
 
   return (
-    <Layout
-      shoppingCart={props.shoppingCart}
-      setShoppingCart={props.setShoppingCart}
-    >
+    <>
       <Head>
         <title>Shopping Cart</title>
       </Head>
@@ -303,7 +299,7 @@ export default function ShoppingCartPage(props) {
           </div>
         )}
       </div>
-    </Layout>
+    </>
   );
 }
 

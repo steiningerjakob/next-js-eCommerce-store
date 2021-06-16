@@ -14,7 +14,7 @@ const labelStyles = css`
 
 const searchFieldStyles = css`
   height: 40px;
-  width: 320px;
+  width: 560px;
   padding: 8px 8px;
   border-radius: 8px;
   border: 1px solid #dcdcdc;

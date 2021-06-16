@@ -1,23 +1,22 @@
-// ToDo:
-// find more elegant way to send user to thank you page
-// upon successful form submission
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { css } from '@emotion/react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Layout from '../components/Layout';
-import { clearShoppingCart } from '../util/cookies';
+import CheckoutForm from '../components/CheckoutForm';
+import { getShoppingCartSum } from '../util/shoppingCartFunctions';
 
-const containerStyles = css`
+const outerContainerStyles = css`
   padding: 8px 24px;
   display: flex;
-  flex-direction: column;
+  flex: 2 1 auto;
   width: 100%;
   margin-bottom: 32px;
+`;
+
+const shoppingBagSummaryContainer = css`
+  display: flex;
+  flex-direction: column;
+  margin: 24px 0 32px 64px;
 `;
 
 const headingStyles = css`
@@ -26,391 +25,129 @@ const headingStyles = css`
   margin: 8px 0;
 `;
 
-const formContainer = css`
-  margin-top: 24px;
-  width: 54%;
+const shoppingBagContainer = css`
   background-color: #f5f5f5;
   box-shadow: 1px 1px 8px 1px #dcdcdc;
-  border-radius: 4px;
+  border-radius: 8px;
   padding: 16px;
 `;
 
-const formSectionStyles = css`
-  display: flex;
-  flex-wrap: wrap;
+const shoppingBagItemStyles = css`
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  padding: 8px 0;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #dcdcdc;
 `;
 
-const formGroupStyles = css`
-  margin-right: 32px;
-  margin-bottom: 16px;
+const imageStyles = css`
+  max-width: 72px;
 `;
 
-const labelStyles = css`
-  width: 240px;
+const rightItemColumnStyles = css`
   display: flex;
   flex-direction: column;
-  margin-right: 32px;
-  margin-bottom: 4px;
-  font-size: 0.9rem;
-  color: #333;
-`;
+  justify-content: space-between;
+  align-items: flex-end;
 
-const inputStyles = css`
-  padding-left: 8px;
-`;
-
-const checkoutButtonStyles = (variant = 'main') => css`
-  font-weight: 600;
-  font-size: 1.1em;
-  background-color: #153243;
-  color: white;
-  text-align: center;
-  border-radius: 8px;
-  border: 1px solid #dcdcdc;
-  box-shadow: 1px 1px 8px 1px #dcdcdc;
-  margin: 24px 0;
-  width: 272px;
-  height: 72px;
-
-  :hover {
-    opacity: 0.8;
-    cursor: pointer;
+  > div {
+    margin-right: 12px;
+    margin-bottom: 16px;
   }
 
-  ${variant === 'small' &&
-  css`
-    font-weight: 500;
-    font-size: 0.9rem;
-    width: 240px;
-    height: 36px;
-    margin: 8px 0 0 0;
-  `}
+  > button {
+    margin-top: 4px;
+  }
+`;
+
+const totalStyles = css`
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 1.5em;
+  margin-top: 16px;
+
+  div + div {
+    margin-right: 12px;
+  }
 `;
 
 export default function Checkout(props) {
-  // Source for form validation:
-  // https://dev.to/alecgrey/controlled-forms-with-front-and-backend-validations-using-react-bootstrap-5a2
-  const [form, setForm] = useState({});
-  const [errors, setErrors] = useState({});
-  const [formIsValidated, setFormIsValidated] = useState(false);
-
-  function setField(field, value) {
-    setForm({
-      ...form,
-      [field]: value,
-    });
-    // Check and see if errors exist, and remove them from the error object:
-    if (!!errors[field]) {
-      setErrors({
-        ...errors,
-        [field]: null,
-      });
-    }
-  }
-
-  function findFormErrors() {
-    const {
-      firstName,
-      lastName,
-      phoneNumber,
-      emailAddress,
-      address,
-      postalCode,
-      city,
-      country,
-      creditCardNumber,
-      expiration,
-      nameOnCard,
-      cvv,
-    } = form;
-    const newErrors = {};
-    // "name-like" errors
-    if (!firstName || firstName === '') {
-      newErrors.firstName = 'Cannot be blank!';
-    } else if (firstName.length > 40) {
-      newErrors.firstName = 'Name is too long!';
-    }
-    if (!lastName || lastName === '') {
-      newErrors.lastName = 'Cannot be blank!';
-    } else if (lastName.length > 40) {
-      newErrors.lastName = 'Name is too long!';
-    }
-    if (!nameOnCard || nameOnCard === '') {
-      newErrors.nameOnCard = 'Cannot be blank!';
-    } else if (nameOnCard.length > 40) {
-      newErrors.nameOnCard = 'Name is too long!';
-    }
-    // "address-like" errors
-    if (!address || address === '') newErrors.address = 'Cannot be blank!';
-    if (!city || city === '') newErrors.city = 'Cannot be blank!';
-    if (!country || country === '') {
-      newErrors.country = 'Cannot be blank!';
-    } else if (country !== 'Austria') {
-      newErrors.country = 'Shipping address must be in Austria!';
-    }
-    // "number-like" error
-    if (!phoneNumber || phoneNumber === '') {
-      newErrors.phoneNumber = 'Cannot be blank!';
-    } else if (phoneNumber.length > 15) {
-      newErrors.phoneNumber = 'Phone number is too long!';
-    }
-    if (!postalCode || postalCode === '') {
-      newErrors.postalCode = 'Cannot be blank!';
-    } else if (postalCode.length !== 4) {
-      newErrors.postalCode = 'Invalid postal code!';
-    }
-    if (!creditCardNumber || creditCardNumber === '') {
-      newErrors.creditCardNumber = 'Cannot be blank!';
-    } else if (creditCardNumber.length < 16 || creditCardNumber.length > 20) {
-      newErrors.creditCardNumber = 'Invalid credit card number!';
-    }
-    if (!expiration || expiration === '') {
-      newErrors.expiration = 'Cannot be blank!';
-    } else if (expiration.length !== 5) {
-      newErrors.expiration = 'Invalid expiration!';
-    }
-    if (!cvv || cvv === '') {
-      newErrors.cvv = 'Cannot be blank!';
-    } else if (cvv.length < 3 || cvv.length > 4) {
-      newErrors.cvv = 'Invalid CVV!';
-    }
-    // email address error
-    if (!emailAddress || emailAddress === '') {
-      newErrors.emailAddress = 'Cannot be blank!';
-    }
-    return newErrors;
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    // get our new errors
-    const newErrors = findFormErrors();
-    // Conditional logic:
-    if (Object.keys(newErrors).length > 0) {
-      // We got errors!
-      setErrors(newErrors);
-    } else {
-      // No errors! Put any logic here for the form submission!
-      alert('You are all set! Please click "Place your order"');
-      setFormIsValidated(true);
-    }
-  }
-
   return (
-    <Layout
-      shoppingCart={props.shoppingCart}
-      setShoppingCart={props.setShoppingCart}
-    >
+    <>
       <Head>
         <title>Checkout</title>
       </Head>
-      <div css={containerStyles}>
-        <div css={formContainer}>
-          <Form>
-            <p css={headingStyles}>Customer information</p>
-            <section css={formSectionStyles}>
-              <Form.Group css={formGroupStyles} data-cy="form-group">
-                <Form.Label css={labelStyles}>First name</Form.Label>
-                <Form.Control
-                  type="text"
-                  css={inputStyles}
-                  onChange={(e) => setField('firstName', e.target.value)}
-                  placeholder="Jane"
-                  isInvalid={!!errors.firstName}
-                  data-cy="checkout-form-firstName"
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.firstName}
-                </Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group css={formGroupStyles}>
-                <Form.Label css={labelStyles}>Last name</Form.Label>
-                <Form.Control
-                  type="text"
-                  css={inputStyles}
-                  onChange={(e) => setField('lastName', e.target.value)}
-                  placeholder="Doe"
-                  isInvalid={!!errors.lastName}
-                  data-cy="checkout-form-lastName"
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.lastName}
-                </Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group css={formGroupStyles}>
-                <Form.Label css={labelStyles}>Email address</Form.Label>
-                <Form.Control
-                  type="email"
-                  css={inputStyles}
-                  onChange={(e) => setField('emailAddress', e.target.value)}
-                  placeholder="jane@doe.com"
-                  isInvalid={!!errors.emailAddress}
-                  data-cy="checkout-form-emailAddress"
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.emailAddress}
-                </Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group css={formGroupStyles}>
-                <Form.Label css={labelStyles}>Phone number</Form.Label>
-                <Form.Control
-                  type="text"
-                  css={inputStyles}
-                  onChange={(e) => setField('phoneNumber', e.target.value)}
-                  placeholder="0676/1234567"
-                  isInvalid={!!errors.phoneNumber}
-                  data-cy="checkout-form-phoneNumber"
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.phoneNumber}
-                </Form.Control.Feedback>
-              </Form.Group>
-            </section>
-            <p css={headingStyles}>Shipping information</p>
-            <section css={formSectionStyles}>
-              <Form.Group css={formGroupStyles}>
-                <Form.Label css={labelStyles}>Address</Form.Label>
-                <Form.Control
-                  type="text"
-                  css={inputStyles}
-                  onChange={(e) => setField('address', e.target.value)}
-                  placeholder="Sappho Street 1"
-                  isInvalid={!!errors.address}
-                  data-cy="checkout-form-address"
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.address}
-                </Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group css={formGroupStyles}>
-                <Form.Label css={labelStyles}>Postal code</Form.Label>
-                <Form.Control
-                  type="text"
-                  css={inputStyles}
-                  onChange={(e) => setField('postalCode', e.target.value)}
-                  placeholder="1090"
-                  isInvalid={!!errors.postalCode}
-                  data-cy="checkout-form-postalCode"
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.postalCode}
-                </Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group css={formGroupStyles}>
-                <Form.Label css={labelStyles}>City</Form.Label>
-                <Form.Control
-                  type="text"
-                  css={inputStyles}
-                  onChange={(e) => setField('city', e.target.value)}
-                  placeholder="Vienna"
-                  isInvalid={!!errors.city}
-                  data-cy="checkout-form-city"
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.city}
-                </Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group css={formGroupStyles}>
-                <Form.Label css={labelStyles}>Country</Form.Label>
-                <Form.Control
-                  type="text"
-                  css={inputStyles}
-                  onChange={(e) => setField('country', e.target.value)}
-                  placeholder="Austria"
-                  isInvalid={!!errors.country}
-                  data-cy="checkout-form-country"
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.country}
-                </Form.Control.Feedback>
-              </Form.Group>
-            </section>
-            <p css={headingStyles}>Billing information</p>
-            <section css={formSectionStyles}>
-              <Form.Group css={formGroupStyles}>
-                <Form.Label css={labelStyles}>Credit card number</Form.Label>
-                <Form.Control
-                  type="text"
-                  css={inputStyles}
-                  onChange={(e) => setField('creditCardNumber', e.target.value)}
-                  placeholder="1111 2222 3333 4444"
-                  isInvalid={!!errors.creditCardNumber}
-                  data-cy="checkout-form-creditCardNumber"
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.creditCardNumber}
-                </Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group css={formGroupStyles}>
-                <Form.Label css={labelStyles}>Expiration</Form.Label>
-                <Form.Control
-                  type="text"
-                  css={inputStyles}
-                  onChange={(e) => setField('expiration', e.target.value)}
-                  placeholder="MM/YY"
-                  isInvalid={!!errors.expiration}
-                  data-cy="checkout-form-expiration"
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.expiration}
-                </Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group css={formGroupStyles}>
-                <Form.Label css={labelStyles}>Name on card</Form.Label>
-                <Form.Control
-                  type="text"
-                  css={inputStyles}
-                  onChange={(e) => setField('nameOnCard', e.target.value)}
-                  placeholder="Jane Doe"
-                  isInvalid={!!errors.nameOnCard}
-                  data-cy="checkout-form-nameOnCard"
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.nameOnCard}
-                </Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group css={formGroupStyles}>
-                <Form.Label css={labelStyles}>CVV</Form.Label>
-                <Form.Control
-                  type="text"
-                  css={inputStyles}
-                  onChange={(e) => setField('cvv', e.target.value)}
-                  placeholder="123"
-                  isInvalid={!!errors.cvv}
-                  data-cy="checkout-form-cvv"
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.cvv}
-                </Form.Control.Feedback>
-              </Form.Group>
-            </section>
-            <Button
-              type="submit"
-              onClick={handleSubmit}
-              variant="secondary"
-              data-cy="checkout-form-submit-button"
-            >
-              Submit information
-            </Button>
-          </Form>
-        </div>
-        <div data-cy="checkout-place-order-element">
-          {formIsValidated === true ? (
-            <Link href="/success">
-              <a data-cy="checkout-place-order-link">
-                <button
-                  css={checkoutButtonStyles()}
-                  onClick={clearShoppingCart()}
-                >
-                  Place your order
-                </button>
-              </a>
-            </Link>
-          ) : (
-            ''
-          )}
+      <div css={outerContainerStyles}>
+        <CheckoutForm setShoppingCart={props.setShoppingCart} />
+        <div css={shoppingBagSummaryContainer}>
+          <div css={shoppingBagContainer}>
+            <div css={headingStyles}>Order summary</div>
+            {props.productsInShoppingBag.map((b) => (
+              <div key={b.id} css={shoppingBagItemStyles}>
+                <div>
+                  <Link href={`/products/${b.id}`}>
+                    <a>
+                      <img
+                        src={`/${b.img}`}
+                        alt={b.titleShort}
+                        css={imageStyles}
+                      />
+                    </a>
+                  </Link>
+                </div>
+                <div>
+                  <div>{b.titleShort}</div>
+                  <div>by {b.author}</div>
+                  <div>Quantity: {b.quantity}</div>
+                </div>
+                <div css={rightItemColumnStyles}>
+                  <div>
+                    {b.currency} {(b.usedPrice * b.quantity).toFixed(2)}
+                  </div>
+                </div>
+              </div>
+            ))}
+            <div css={totalStyles}>
+              <div>Total:</div>
+              <div>€ {getShoppingCartSum(props.productsInShoppingBag)}</div>
+            </div>
+          </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
+}
+
+export async function getServerSideProps(context) {
+  const { getAllProducts } = await import('../util/database');
+
+  const products = await getAllProducts();
+
+  const rawCookie = context.req.cookies.shoppingcart;
+
+  // check if raw cookie is undefined
+  const cookieArray = rawCookie ? JSON.parse(rawCookie) : [];
+
+  // combine arrays "shoppingcart" (as defined by cookie)
+  // and "products" (as defined in database) to create one array
+  // with desired info on products in cart (incl. quantity)
+  const productsInShoppingBag = cookieArray.map((item) => {
+    const draftShoppingBagObject = products.find((book) => book.id === item.id);
+    return {
+      id: draftShoppingBagObject.id,
+      titleShort: draftShoppingBagObject.titleShort,
+      author: draftShoppingBagObject.author,
+      img: draftShoppingBagObject.img,
+      usedPrice: draftShoppingBagObject.usedPrice,
+      currency: draftShoppingBagObject.currency,
+      quantity: item.quantity,
+    };
+  });
+
+  return {
+    props: {
+      productsInShoppingBag,
+    },
+  };
 }

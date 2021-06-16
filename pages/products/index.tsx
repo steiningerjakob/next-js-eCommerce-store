@@ -4,7 +4,6 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { Dispatch, SetStateAction, useState } from 'react';
 import ReactStars from 'react-rating-stars-component';
-import Layout from '../../components/Layout';
 import { convertQueryValueToStringLike } from '../../util/context';
 import { addBookByBookId, ShoppingCart } from '../../util/cookies';
 import { Product } from '../../util/database';
@@ -108,7 +107,6 @@ const starStyles = css`
 `;
 
 type Props = {
-  shoppingCart: ShoppingCart;
   setShoppingCart: Dispatch<SetStateAction<ShoppingCart>>;
   products: Product[];
   filteredProducts: Product[];
@@ -128,10 +126,7 @@ export default function Products(props: Props) {
   const [languageFilter, setLanguageFilter] = useState('All languages');
 
   return (
-    <Layout
-      shoppingCart={props.shoppingCart}
-      setShoppingCart={props.setShoppingCart}
-    >
+    <>
       <Head>
         <title>Products</title>
       </Head>
@@ -233,7 +228,7 @@ export default function Products(props: Props) {
           )}
         </div>
       </div>
-    </Layout>
+    </>
   );
 }
 

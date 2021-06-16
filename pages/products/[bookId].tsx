@@ -13,8 +13,8 @@ const gridStyles = css`
   display: grid;
   grid-template-columns: 1fr 2fr 2fr;
   gap: 24px;
-  margin-top: 25px;
-  margin-left: 15px;
+  margin-top: 24px;
+  margin-left: 32px;
 `;
 
 const headingStyles = css`
@@ -133,10 +133,7 @@ export default function ProductDetails(props: Props) {
   }
 
   return (
-    <Layout
-      shoppingCart={props.shoppingCart}
-      setShoppingCart={props.setShoppingCart}
-    >
+    <>
       <Head>
         <title>{props.singleProduct.titleShort}</title>
       </Head>
@@ -148,21 +145,21 @@ export default function ProductDetails(props: Props) {
           />
         </section>
         <section>
-          <p css={headingStyles}>{props.singleProduct.titleShort}</p>
-          <p css={authorStyles}>by {props.singleProduct.author}</p>
-          <p css={headingStyles}>Product details:</p>
-          <p css={ratingStyles}>
+          <div css={headingStyles}>{props.singleProduct.titleShort}</div>
+          <div css={authorStyles}>by {props.singleProduct.author}</div>
+          <div css={headingStyles}>Product details:</div>
+          <div css={ratingStyles}>
             <div>
               <ReactStars
                 count={5}
                 size={24}
-                value={props.singleProduct.starRating}
+                value={Number(props.singleProduct.starRating)}
                 isHalf={true}
                 edit={false}
               />
             </div>
             <div>{props.singleProduct.reviews} reviews</div>
-          </p>
+          </div>
           <p>
             <span css={boldStyles}>Publisher: </span>
             {props.singleProduct.publisher}
@@ -204,7 +201,7 @@ export default function ProductDetails(props: Props) {
             {Number(props.singleProduct.newPrice).toFixed(2)})
           </p>
           <p>Expected delivery date: {getDeliveryDate()}</p>
-          <Link href="../../shoppingcart">
+          <Link href="/shoppingcart">
             <a data-cy="single-product-shopping-cart-link">
               <button
                 onClick={() => {
@@ -229,7 +226,7 @@ export default function ProductDetails(props: Props) {
           </Link>
         </section>
       </div>
-    </Layout>
+    </>
   );
 }
 

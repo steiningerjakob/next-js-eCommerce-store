@@ -6,7 +6,7 @@ import SearchField from './SearchField';
 
 const headerStyles = css`
   display: flex;
-  padding: 16px 40px;
+  padding: 8px 40px;
   background-color: #153243;
   position: sticky;
   top: 0;
@@ -18,7 +18,7 @@ const headerStyles = css`
     display: flex;
     align-items: center;
     line-height: 1em;
-    margin-left: 24px;
+    margin-left: 16px;
   }
 
   a {
@@ -38,19 +38,29 @@ const headerStyles = css`
   }
 `;
 
-const searchBarContainer = css`
+const leftNavBarContainer = css`
   display: flex;
   align-items: center;
   margin-right: -48px;
 `;
 
+const logoStyles = css`
+  width: 128px;
+  margin-right: -12px;
+`;
+
 export default function Header(props) {
   return (
     <header css={headerStyles}>
-      <Link href="/">
-        <a data-cy="header-home-link">Home</a>
-      </Link>
-      <div css={searchBarContainer}>
+      <div css={leftNavBarContainer}>
+        <Link href="/">
+          <a data-cy="header-home-link">
+            <img src="cover.png" alt="" css={logoStyles} />
+          </a>
+        </Link>
+        <Link href="/about">
+          <a>About</a>
+        </Link>
         <Link href="/products">
           <a data-cy="header-all-products-link">All Books</a>
         </Link>
@@ -66,9 +76,7 @@ export default function Header(props) {
                 title: 'trash icon',
               }}
             >
-              <div>
-                <FaShoppingBag size="1.5em" />
-              </div>
+              <FaShoppingBag size="1.5em" />
             </IconContext.Provider>
             (
             {props.shoppingCart

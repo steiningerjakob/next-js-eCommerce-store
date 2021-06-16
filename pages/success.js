@@ -1,6 +1,5 @@
 import { css } from '@emotion/react';
 import Head from 'next/head';
-import Layout from '../components/Layout';
 
 const containerStyles = css`
   display: flex;
@@ -18,7 +17,7 @@ const messageContainer = css`
   display: flex;
   flex-direction: column;
   text-align: center;
-  margin-bottom: 64px;
+  margin-bottom: 80px;
 
   > span {
     margin: 8px;
@@ -26,12 +25,9 @@ const messageContainer = css`
   }
 `;
 
-export default function Success(props) {
+export default function Success() {
   return (
-    <Layout
-      shoppingCart={props.shoppingCart}
-      setShoppingCart={props.setShoppingCart}
-    >
+    <>
       <Head>
         <title>Thank you!</title>
       </Head>
@@ -48,6 +44,6 @@ export default function Success(props) {
           </span>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

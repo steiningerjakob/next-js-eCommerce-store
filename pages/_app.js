@@ -1,6 +1,7 @@
 import { css, Global } from '@emotion/react';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
+import Layout from '../components/Layout';
 import { getShoppingCartCookieValue } from '../util/cookies';
 
 export default function MyApp({ Component, pageProps }) {
@@ -35,11 +36,14 @@ export default function MyApp({ Component, pageProps }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {/* pass props for state variable shopping cart */}
-      <Component
-        {...pageProps}
-        shoppingCart={shoppingCart}
-        setShoppingCart={setShoppingCart}
-      />
+      {/* this component represents all components in pages */}
+      <Layout shoppingCart={shoppingCart} setShoppingCart={setShoppingCart}>
+        <Component
+          {...pageProps}
+          shoppingCart={shoppingCart}
+          setShoppingCart={setShoppingCart}
+        />
+      </Layout>
     </>
   );
 }

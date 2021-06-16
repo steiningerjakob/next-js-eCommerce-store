@@ -1,26 +1,32 @@
 import { css } from '@emotion/react';
 import Head from 'next/head';
 import Link from 'next/link';
-import Layout from '../components/Layout';
 
-export default function Home(props) {
-  const backgroundStyles = css`
-    background-image: url('title photo.jpg');
-    background-size: cover;
-    opacity: 0.7;
-  `;
-
+export default function Home() {
   const containerStyles = css`
+    padding: 8px 24px;
     display: flex;
-    position: relative;
-    width: 1200px;
-    height: 640px;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    opacity: 1;
+    justify-content: center;
+    width: 100vw;
+    height: 85vh;
+    margin-bottom: 32px;
   `;
 
-  const navButtonStyles = (variant = 'main') => css`
+  const h1Styles = css`
+    font-size: 2em;
+    font-weight: 600;
+    margin-bottom: 24px;
+  `;
+
+  const h2Styles = css`
+    font-size: 1.5em;
+    font-weight: 500;
+    margin-bottom: 80px;
+  `;
+
+  const navButtonStyles = css`
     font-weight: 600;
     font-size: 1.1em;
     background-color: #153243;
@@ -30,39 +36,34 @@ export default function Home(props) {
     border: 1px solid #dcdcdc;
     box-shadow: 1px 1px 8px 1px #dcdcdc;
     margin: 24px 0;
-    width: 272px;
+    width: 320px;
     height: 72px;
 
     :hover {
+      opacity: 0.8;
       cursor: pointer;
-      transform: scale(1.1);
     }
+  `;
 
-    ${variant === 'secondary' &&
-    css`
-      background-color: white;
-      color: #153243;
-      border: 1px solid #153243;
-    `}
+  const imgStyles = css`
+    width: 40%;
   `;
 
   return (
-    <Layout
-      shoppingCart={props.shoppingCart}
-      setShoppingCart={props.setShoppingCart}
-    >
+    <>
       <Head>
         <title>Home</title>
       </Head>
-      <div css={backgroundStyles}>
-        <div css={containerStyles}>
-          <Link href="/products">
-            <a>
-              <button css={navButtonStyles()}>Check out our shop</button>
-            </a>
-          </Link>
-        </div>
+      <div css={containerStyles}>
+        <img src="cover body.png" alt="" css={imgStyles} />
+        <h1 css={h1Styles}>“There is no friend as loyal as a book.”</h1>
+        <h2 css={h2Styles}>― Ernest Hemingway</h2>
+        <Link href="/products">
+          <a>
+            <button css={navButtonStyles}>Check out our used book store</button>
+          </a>
+        </Link>
       </div>
-    </Layout>
+    </>
   );
 }
