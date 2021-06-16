@@ -1,6 +1,7 @@
 import camelcaseKeys from 'camelcase-keys';
 import dotenvSafe from 'dotenv-safe';
 import postgres from 'postgres';
+import setPostgresDefaultsOnHeroku from '../setPostgresDefaultsOnHeroku';
 
 export type Product = {
   author: string;
@@ -21,6 +22,8 @@ export type Product = {
   titleShort: string;
   usedPrice: number;
 };
+
+setPostgresDefaultsOnHeroku();
 
 // Read Postgres secret connection from .env file
 dotenvSafe.config();
@@ -115,7 +118,8 @@ export async function searchFunction(query?: string) {
   } else {
     return (
       products
-        // filter book descriptions that include query
+        // filter book descriptions that include query, where
+        // query is derived from url context (see products/index.js)
         .filter((b) => {
           return Object.values(b).some((str) =>
             String(str).toLowerCase().includes(query),
