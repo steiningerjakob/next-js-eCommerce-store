@@ -4,8 +4,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { Dispatch, SetStateAction, useState } from 'react';
 import ReactStars from 'react-rating-stars-component';
-import Layout from '../../components/Layout';
-import { convertQueryValue } from '../../util/context';
+import { convertQueryValueToNumber } from '../../util/context';
 import { addBookByBookId, ShoppingCart } from '../../util/cookies';
 import { Product } from '../../util/database';
 
@@ -94,7 +93,6 @@ const navButtonStyles = (variant = 'main') => css`
 `;
 
 type Props = {
-  shoppingCart: ShoppingCart;
   singleProduct?: Product;
   setShoppingCart: Dispatch<SetStateAction<ShoppingCart>>;
 };
@@ -117,114 +115,106 @@ export default function ProductDetails(props: Props) {
     );
     return JSON.stringify(deliveryDate).split('T')[0].split('"')[1];
   }
-  // Show message if product does not exist
-  if (!props.singleProduct) {
-    return (
-      <Layout
-        shoppingCart={props.shoppingCart}
-        setShoppingCart={props.setShoppingCart}
-      >
-        <Head>
-          <title>Product not found!</title>
-        </Head>
-        Product not found
-      </Layout>
-    );
-  }
 
   return (
     <>
       <Head>
-        <title>{props.singleProduct.titleShort}</title>
+        {props.singleProduct && <title>{props.singleProduct.titleShort}</title>}
       </Head>
       <div css={gridStyles}>
-        <section>
-          <img
-            src={`/${props.singleProduct.img}`}
-            alt={props.singleProduct.titleShort}
-          />
-        </section>
-        <section>
-          <div css={headingStyles}>{props.singleProduct.titleShort}</div>
-          <div css={authorStyles}>by {props.singleProduct.author}</div>
-          <div css={headingStyles}>Product details:</div>
-          <div css={ratingStyles}>
-            <div>
-              <ReactStars
-                count={5}
-                size={24}
-                value={Number(props.singleProduct.starRating)}
-                isHalf={true}
-                edit={false}
+        {!props.singleProduct ? (
+          <p>Product not found</p>
+        ) : (
+          <>
+            <section>
+              <img
+                src={`/${props.singleProduct.img}`}
+                alt={props.singleProduct.titleShort}
               />
-            </div>
-            <div>{props.singleProduct.reviews} reviews</div>
-          </div>
-          <p>
-            <span css={boldStyles}>Publisher: </span>
-            {props.singleProduct.publisher}
-          </p>
-          <p>
-            <span css={boldStyles}>Publication date: </span>
-            {props.singleProduct.publicationDate}
-          </p>
-          <p>
-            <span css={boldStyles}>Language: </span>
-            {props.singleProduct.lang}
-          </p>
-          <p>
-            <span css={boldStyles}>Pages: </span>
-            {props.singleProduct.pages}
-          </p>
-          <p>
-            <span css={boldStyles}>ISBN: </span>
-            {props.singleProduct.isbn}
-          </p>
-          <p>
-            <span css={boldStyles}>Description: </span>
-            {readMoreIsActive
-              ? props.singleProduct.descript.slice(0, 360)
-              : props.singleProduct.descript}
-            <button onClick={toggleReadMore} css={readMoreStyles}>
-              {readMoreIsActive ? '...read more' : ' show less'}
-            </button>
-          </p>
-        </section>
-        <section>
-          <p css={headingStyles}>Buy used from us:</p>
-          <p css={priceStyles}>
-            {props.singleProduct.currency}{' '}
-            {Number(props.singleProduct.usedPrice).toFixed(2)}
-          </p>
-          <p css={amazonStyles}>
-            (Amazon's price: {props.singleProduct.currency}{' '}
-            {Number(props.singleProduct.newPrice).toFixed(2)})
-          </p>
-          <p>Expected delivery date: {getDeliveryDate()}</p>
-          <Link href="/shoppingcart">
-            <a data-cy="single-product-shopping-cart-link">
-              <button
-                onClick={() => {
-                  if (props.singleProduct) {
-                    props.setShoppingCart(
-                      addBookByBookId(props.singleProduct.id),
-                    );
-                  }
-                }}
-                css={navButtonStyles()}
-              >
-                Add to shopping bag
-              </button>
-            </a>
-          </Link>
-          <Link href="/products">
-            <a>
-              <button css={navButtonStyles('secondary')}>
-                Continue shopping
-              </button>
-            </a>
-          </Link>
-        </section>
+            </section>
+            <section>
+              <div css={headingStyles}>{props.singleProduct.titleShort}</div>
+              <div css={authorStyles}>by {props.singleProduct.author}</div>
+              <div css={headingStyles}>Product details:</div>
+              <div css={ratingStyles}>
+                <div>
+                  <ReactStars
+                    count={5}
+                    size={24}
+                    value={Number(props.singleProduct.starRating)}
+                    isHalf={true}
+                    edit={false}
+                  />
+                </div>
+                <div>{props.singleProduct.reviews} reviews</div>
+              </div>
+              <p>
+                <span css={boldStyles}>Publisher: </span>
+                {props.singleProduct.publisher}
+              </p>
+              <p>
+                <span css={boldStyles}>Publication date: </span>
+                {props.singleProduct.publicationDate}
+              </p>
+              <p>
+                <span css={boldStyles}>Language: </span>
+                {props.singleProduct.lang}
+              </p>
+              <p>
+                <span css={boldStyles}>Pages: </span>
+                {props.singleProduct.pages}
+              </p>
+              <p>
+                <span css={boldStyles}>ISBN: </span>
+                {props.singleProduct.isbn}
+              </p>
+              <p>
+                <span css={boldStyles}>Description: </span>
+                {readMoreIsActive
+                  ? props.singleProduct.descript.slice(0, 360)
+                  : props.singleProduct.descript}
+                <button onClick={toggleReadMore} css={readMoreStyles}>
+                  {readMoreIsActive ? '...read more' : ' show less'}
+                </button>
+              </p>
+            </section>
+            <section>
+              <p css={headingStyles}>Buy used from us:</p>
+              <p css={priceStyles}>
+                {props.singleProduct.currency}{' '}
+                {Number(props.singleProduct.usedPrice).toFixed(2)}
+              </p>
+              <p css={amazonStyles}>
+                (Amazon's price: {props.singleProduct.currency}{' '}
+                {Number(props.singleProduct.newPrice).toFixed(2)})
+              </p>
+              <p>Expected delivery date: {getDeliveryDate()}</p>
+              <Link href="/shoppingcart">
+                <a data-cy="single-product-shopping-cart-link">
+                  <button
+                    onClick={() => {
+                      if (props.singleProduct) {
+                        props.setShoppingCart(
+                          addBookByBookId(props.singleProduct.id),
+                        );
+                      }
+                    }}
+                    css={navButtonStyles()}
+                  >
+                    Add to shopping bag
+                  </button>
+                </a>
+              </Link>
+              <Link href="/products">
+                <a>
+                  <button css={navButtonStyles('secondary')}>
+                    Continue shopping
+                  </button>
+                </a>
+              </Link>
+            </section>
+          </>
+        )}
       </div>
     </>
   );
@@ -232,7 +222,7 @@ export default function ProductDetails(props: Props) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { getProductById } = await import('../../util/database');
-  const bookId = convertQueryValue(context.query.bookId);
+  const bookId = convertQueryValueToNumber(context.query.bookId);
 
   const singleProduct = await getProductById(bookId);
 

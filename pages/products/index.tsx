@@ -108,17 +108,16 @@ const starStyles = css`
 
 type Props = {
   setShoppingCart: Dispatch<SetStateAction<ShoppingCart>>;
-  products: Product[];
   filteredProducts: Product[];
 };
 
 export default function Products(props: Props) {
   // create list of unique genres from products array
   const uniqueGenres = [
-    ...new Set(props.products.map((book) => book.genre)),
+    ...new Set(props.filteredProducts.map((book) => book.genre)),
   ].concat(...['All genres']);
   const uniqueLanguages = [
-    ...new Set(props.products.map((book) => book.lang)),
+    ...new Set(props.filteredProducts.map((book) => book.lang)),
   ].concat(...['All languages']);
 
   // state variables for filters
@@ -165,7 +164,9 @@ export default function Products(props: Props) {
         </div>
         <div css={productListContainer}>
           {props.filteredProducts.length === 0 ? (
-            <p>Didn't find any books that match your search... try again</p>
+            <div css={productContainer}>
+              <p>Didn't find any books that match your search... try again</p>
+            </div>
           ) : (
             props.filteredProducts
               .filter((b) => {
@@ -198,7 +199,6 @@ export default function Products(props: Props) {
                       />{' '}
                     </a>
                   </Link>
-                  {/* search function renders wrong image and link */}
                   <button
                     onClick={() => {
                       props.setShoppingCart(addBookByBookId(b.id));
@@ -233,11 +233,7 @@ export default function Products(props: Props) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { getAllProducts, searchFunction } = await import(
-    '../../util/database'
-  );
-
-  const products = await getAllProducts();
+  const { searchFunction } = await import('../../util/database');
 
   // get current search query value from url and
   // parse to stringlike (i.e. not array of strings)
@@ -246,7 +242,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   return {
     props: {
-      products: products,
       filteredProducts: filteredProducts,
     },
   };

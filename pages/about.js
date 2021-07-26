@@ -1,32 +1,32 @@
 import { css } from '@emotion/react';
 import Head from 'next/head';
 
-export default function Home() {
-  const containerStyles = css`
-    padding: 8px 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100vw;
-    height: 85vh;
-    margin-bottom: 32px;
-  `;
+const containerStyles = css`
+  padding: 8px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 85vh;
+  margin-bottom: 32px;
+`;
 
-  const h1Styles = css`
-    font-size: 2em;
-    font-weight: 600;
-    margin-bottom: 80px;
-  `;
+const h1Styles = css`
+  font-size: 2em;
+  font-weight: 600;
+  margin-bottom: 80px;
+`;
 
-  const h2Styles = css`
-    font-size: 1.3em;
-    font-weight: 400;
-    margin-bottom: 16px;
-    text-align: center;
-    width: 50%;
-  `;
+const h2Styles = css`
+  font-size: 1.3em;
+  font-weight: 400;
+  margin-bottom: 16px;
+  text-align: center;
+  width: 50%;
+`;
 
+export default function About() {
   return (
     <>
       <Head>

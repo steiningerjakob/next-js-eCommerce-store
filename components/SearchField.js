@@ -37,9 +37,6 @@ export default function SearchField() {
             name="s"
             css={searchFieldStyles}
           />
-          <button type="submit" css={labelStyles}>
-            Search books
-          </button>
         </div>
       </form>
     </div>

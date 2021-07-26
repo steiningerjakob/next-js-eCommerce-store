@@ -65,11 +65,3 @@ export function clearShoppingCart() {
   cookies.set('shoppingcart', newCookieValue);
   return newCookieValue;
 }
-
-export function parseCookieValue(value: string, defaultValue: any) {
-  try {
-    return JSON.parse(value);
-  } catch (err) {
-    return defaultValue;
-  }
-}

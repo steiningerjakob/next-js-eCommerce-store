@@ -1,4 +1,6 @@
-export function convertQueryValue(queryValue: string | string[] | undefined) {
+export function convertQueryValueToNumber(
+  queryValue: string | string[] | undefined,
+) {
   if (Array.isArray(queryValue)) return parseInt(queryValue[0]);
   if (typeof queryValue === 'undefined') return queryValue;
   return parseInt(queryValue);
